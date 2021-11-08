@@ -82,7 +82,7 @@ class Game
                 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, g, 0, 0, 0, 0, 0],
+                [0, 0, g, 0, g, 0, g, 0, 0, 0],
                 [g, g, g, g, g, g, g, g, g, g],
                 [g, g, g, g, g, g, g, g, g, g]
             ]
@@ -105,7 +105,6 @@ class Game
                     
                     if (player.collide(this.array[h][i][j]) && this.array[h][i][j].type != "0") {
                         var rockbottom = this.array[h][i][j].y - player.stats.height;
-                        console.log(player.stats.y - rockbottom);
                         player.gravitySpeed = 0;
                         if (player.stats.y > rockbottom && player.stats.y - rockbottom < 6 / 5 *player.amount.y/* && (player.stats.y + player.stats.height) - this.array[h][i][j].y < 3*/) {
                             player.stats.y = rockbottom;
@@ -243,7 +242,7 @@ class Player {
             this.jump = true;
         }
     }
-    moveReset()
+    moveReset(event)
     {
         if (event.key === "ArrowRight") {
             this.right = false;
@@ -263,7 +262,7 @@ document.addEventListener("keydown", function () {
     player.movement(event);
 });
 document.addEventListener("keyup", function () {
-    player.moveReset();
+    player.moveReset(event);
 });
 setInterval(function () {
     game.draw();
