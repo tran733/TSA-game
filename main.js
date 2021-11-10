@@ -78,9 +78,9 @@ class Game
                 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, g, 0, 0, 0, g, g, g, 0, 0],
+                [0, g, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, g, g, 0, 0, 0, 0, 0, 0, 0],
                 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                 [0, 0, g, 0, g, 0, g, 0, 0, 0],
                 [g, g, g, g, g, g, g, g, g, g],
@@ -105,18 +105,25 @@ class Game
                     
                     if (player.collide(this.array[h][i][j]) && this.array[h][i][j].type != "0") {
                         var rockbottom = this.array[h][i][j].y - player.stats.height;
-                        player.gravitySpeed = 0;
+                        var rocktop = this.array[h][i][j].y + this.array[h][i][j].height + player.stats.height;
                         if (player.stats.y > rockbottom && player.stats.y - rockbottom < 6 / 5 *player.amount.y/* && (player.stats.y + player.stats.height) - this.array[h][i][j].y < 3*/) {
                             player.stats.y = rockbottom;
                             player.jump = false;
+                            player.gravitySpeed = 0;
+
+                        }
+                        else if(player.stats.y + player.stats.height < rocktop && rocktop - (player.stats.y + player.stats.height) < 6 / 5 *player.amount.y){
+                            player.stats.y = this.array[h][i][j].y + this.array[h][i][j].height;
+                            player.gravitySpeed *= 2;
                         }
                         else {
+                            player.gravitySpeed = 0;
                             if (player.stats.x > this.array[h][i][j].x) {
                                 player.stats.x = this.array[h][i][j].x + this.array[h][i][j].width;
                                 player.left = false;
                                 player.stats.noleft = true;
                             }
-                            if (player.stats.x <= this.array[h][i][j].x) {
+                            if (player.stats.x < this.array[h][i][j].x) {
                                 player.stats.x = this.array[h][i][j].x - player.stats.width;
                                 player.right = false;
                                 player.stats.noright = true;
@@ -142,11 +149,11 @@ class Game
     }
     draw() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        if (player.right && !player.stats.noright) {
+        if (player.right && !player.stats.noright && player.stats.x + player.stats.width +  player.amount.x < canvas.width) {
             player.stats.x += player.amount.x;
             player.stats.noleft = false;
         }
-        if (player.left && !player.stats.noleft) {
+        if (player.left && !player.stats.noleft && player.stats.x - player.amount.x > 0) {
             player.stats.x -= player.amount.x;
             player.stats.noright = false;
         }
@@ -180,7 +187,7 @@ class Player {
         this.color = color;
         this.speedX = 0;
         this.speedY = 0;
-        this.amount = { x: 3, y: 5 }
+        this.amount = { x: 3, y: 4 }
         this.gravity = 0.05;
         this._gravitySpeed = 0;
     }
@@ -256,8 +263,8 @@ class Player {
 
     }
 }
-const player = new Player(100, 100, 50, 50, "yellow");
 const game = new Game();
+const player = new Player(100, 100, 0.5 * canvas.height/ game.array[0][0].length,  0.5 * canvas.height/ game.array[0][0].length, "yellow");
 document.addEventListener("keydown", function () {
     player.movement(event);
 });
