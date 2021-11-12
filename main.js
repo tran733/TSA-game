@@ -13,6 +13,11 @@ const ctx = canvas.getContext("2d");
 localStorage.device = deviceType();
 
 if(localStorage.device == ("mobile" || "tablet")){
+    let de = document.documentElement;
+    if (de.requestFullscreen) { de.requestFullscreen(); }
+    else if (de.mozRequestFullScreen) { de.mozRequestFullScreen(); }
+    else if (de.webkitRequestFullscreen) { de.webkitRequestFullscreen(); }
+    else if (de.msRequestFullscreen) { de.msRequestFullscreen(); }
     screen.orientation.lock("landscape-primary");
     const jumpBtn = document.getElementById("jump");
     const rightBtn = document.getElementById("right");
