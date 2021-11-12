@@ -43,7 +43,7 @@ if(localStorage.device == ("mobile" || "tablet")){
         e.preventDefault();
         player.right = false;
     });
-    leftBtn.addEventListener("touchstart", function(e){
+    leftBtn.addEventListener("touchend", function(e){
         e.preventDefault();
         player.left = false;
     });
