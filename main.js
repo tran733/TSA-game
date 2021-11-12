@@ -15,8 +15,8 @@ const background = document.getElementById("clouds");
 localStorage.device = deviceType();
 
 if(localStorage.device == ("mobile" || "tablet")){
-    var de = document.documentElement;
-    de.requestFullscreen();
+    var e = document.getElementById('myCanvas');
+(e.webkitRequestFullScreen || e.mozRequestFullScreen || e.requestFullscreen).apply(e);
     screen.orientation.lock("landscape-primary");
     const jumpBtn = document.getElementById("jump");
     const rightBtn = document.getElementById("right");
@@ -47,7 +47,6 @@ if(localStorage.device == ("mobile" || "tablet")){
         e.preventDefault();
         player.left = false;
     });
-    background.style.display = "none";
 }
 canvas.width = window.innerWidth * 98/100;
 canvas.height = window.innerHeight * 95/100;
