@@ -2,27 +2,35 @@
 
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml">
 <head>
-    <meta charset="utf-8" />
+    <meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width,
+    user-scalable=no, initial-scale=1, maximum-scale=1, user-scalable=0" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <title>Ninja Platformer</title>
     <link rel="icon" type="image/png" href="favicon.png" />
     <style>
         body {
-           font:  Arial;
-           background-color: black;
-        }
+            margin: 0; 
+            padding: 0;
+            background: #000;
+            }
+
         canvas {
-          margin-top: 0px;
+          margin: 0px;
           background-color: transparent;
           position: absolute;
         }
-
+        #gameBtns{
+            display:none;
+        }
         button {
             color: red;
             font-size: 200%;
             position: absolute;
             border: 3px solid red;
             background-color: white;
-            display: none;
 
         }
         #right{
@@ -31,7 +39,7 @@
 
         }
         #left{
-            right: 15%;
+            right: 30%;
             bottom: 20%;
         }
         #jump{
