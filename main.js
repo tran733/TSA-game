@@ -1,7 +1,47 @@
+const deviceType = () => {
+    const ua = navigator.userAgent;
+    if (/(tablet|ipad|playbook|silk)|(android(?!.*mobi))/i.test(ua)) {
+        return "tablet";
+    }
+    else if (/Mobile|Android|iP(hone|od)|IEMobile|BlackBerry|Kindle|Silk-Accelerated|(hpw|web)OS|Opera M(obi|ini)/.test(ua)) {
+        return "mobile";
+    }
+    return "desktop";
+}
 const canvas = document.getElementById("myCanvas");
 const ctx = canvas.getContext("2d");
-canvas.width = window.innerWidth * 19/20;
-canvas.height = window.innerHeight * 19 / 20;
+localStorage.device = deviceType();
+
+if(localStorage.device == ("mobile" || "tablet")){
+    screen.orientation.lock("landscape-primary");
+    const jumpBtn = document.getElementById("jump");
+    const rightBtn = document.getElementById("right");
+    const leftBtn = document.getElementById("left");
+    const container = document.getElementById("gameBtns");
+    container.style.display = "block";
+    jumpBtn.addEventListener("touchstart", function () {
+        if(!player.jump){
+        player.speedY = -player.amount.y;
+        player.jump = true;
+        }
+    });
+
+    rightBtn.addEventListener("touchstart", function(){
+        player.right = true;
+    });
+    leftBtn.addEventListener("touchstart", function(){
+        player.left = true;
+    });
+    rightBtn.addEventListener("touchend", function(){
+        player.right = false;
+    });
+    leftBtn.addEventListener("touchstart", function(){
+        player.left = false;
+    });
+}
+canvas.width = window.innerWidth * 98/100;
+canvas.height = window.innerHeight * 95/100;
+
 class Component {
     constructor(x, y, width, height, type) {
         this._x = x;
@@ -10,7 +50,8 @@ class Component {
         this.height = height;
         this.types = {
             g: "green",
-            "0": "none"
+            "0": "none",
+            p: "pink"
         }
         this._back = false;
         this._falling = true;
@@ -73,28 +114,48 @@ class Game
     constructor()
     {
         var g = "g";
+        var p = "p";
+        this.current = 
+        {
+            level: 0
+        };
         this.array = [
+            
+                [
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, g, g, g, 0, 0],
+                    [0, g, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, g, 0, g, 0, g, 0, 0, 0],
+                    [g, g, g, g, g, g, g, g, g, g],
+                    [g, g, g, g, g, g, g, g, g, g]
+                ]
+            ,
             [
                 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, g, 0, 0, 0, g, g, g, 0, 0],
+                [0, 0, 0, p, 0, g, 0, g, 0, 0],
                 [0, g, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, g, g, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                 [0, 0, g, 0, g, 0, g, 0, 0, 0],
-                [g, g, g, g, g, g, g, g, g, g],
-                [g, g, g, g, g, g, g, g, g, g]
+                [g, g, p, g, g, g, g, g, g, g],
+                [g, g, g, g, p, g, g, g, g, g]
             ]
         ]
     }
 
     canvas() {
-        for (let h = 0; h < this.array.length; h++) {
+            var h = this.current.level;
+
             for (let i = 0; i < this.array[h].length; i++) {
                 for (let j = 0; j < this.array[h][i].length; j++) {
                     if (!isNaN(this.array[h][i][j]) || typeof this.array[h][i][j] == "string") {
-                        this.array[h][i][j] = new Component(((canvas.width / this.array[h].length) * j) + (h * canvas.width),
+                        this.array[h][i][j] = new Component(((canvas.width / this.array[h].length) * j),
                             ((canvas.height / this.array[h][i].length) * i),
                             ((canvas.width / this.array[h].length)),
                             ((canvas.height / this.array[h][i].length)), 
@@ -144,19 +205,26 @@ class Game
 
 
                 }
-            }
+            
         }
     }
     draw() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        if (player.right && !player.stats.noright && player.stats.x + player.stats.width +  player.amount.x < canvas.width) {
+        if (player.right && !player.stats.noright && player.stats.x + player.stats.width + player.amount.x < canvas.width) {
             player.stats.x += player.amount.x;
             player.stats.noleft = false;
         }
+
+
         if (player.left && !player.stats.noleft && player.stats.x - player.amount.x > 0) {
             player.stats.x -= player.amount.x;
             player.stats.noright = false;
         }
+        if(player.stats.x + player.stats.width +  player.amount.x > canvas.width && game.current.level + 1 < game.array.length){
+            player.stats.x = 0;
+            game.current.level += 1;
+        }
+
         if (player.jump) {
             player.stats.y -= player.amount.y;
         }
@@ -185,11 +253,16 @@ class Player {
         this._left = false;
         this._jump = false;
         this.color = color;
-        this.speedX = 0;
-        this.speedY = 0;
+        this._speedY = 0;
         this.amount = { x: 3, y: 4 }
         this.gravity = 0.05;
         this._gravitySpeed = 0;
+    }
+    get speedY() {
+        return this._speedY;
+    }
+    set speedY(value) {
+        this._speedY = value;
     }
     get gravitySpeed() {
         return this._gravitySpeed;
@@ -257,14 +330,14 @@ class Player {
         if (event.key === "ArrowLeft") {
             this.left = false;
         }
-        if (event.key == "ArrowUp" && this.jump) {
-            this.jump = true;
-        }
+
 
     }
 }
 const game = new Game();
-const player = new Player(100, 100, 0.5 * canvas.height/ game.array[0][0].length,  0.5 * canvas.height/ game.array[0][0].length, "yellow");
+const player = new Player(100, 150, 30,  30, "yellow");
+
+
 document.addEventListener("keydown", function () {
     player.movement(event);
 });
