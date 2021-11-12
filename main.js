@@ -19,23 +19,28 @@ if(localStorage.device == ("mobile" || "tablet")){
     const leftBtn = document.getElementById("left");
     const container = document.getElementById("gameBtns");
     container.style.display = "block";
-    jumpBtn.addEventListener("touchstart", function () {
+    jumpBtn.addEventListener("touchstart", function (e) {
+        e.preventDefault();
         if(!player.jump){
         player.speedY = -player.amount.y;
         player.jump = true;
         }
     });
 
-    rightBtn.addEventListener("touchstart", function(){
+    rightBtn.addEventListener("touchstart", function(e){
+        e.preventDefault();
         player.right = true;
     });
-    leftBtn.addEventListener("touchstart", function(){
+    leftBtn.addEventListener("touchstart", function(e){
+        e.preventDefault();
         player.left = true;
     });
-    rightBtn.addEventListener("touchend", function(){
+    rightBtn.addEventListener("touchend", function(e){
+        e.preventDefault();
         player.right = false;
     });
-    leftBtn.addEventListener("touchstart", function(){
+    leftBtn.addEventListener("touchstart", function(e){
+        e.preventDefault();
         player.left = false;
     });
 }
