@@ -10,14 +10,13 @@ const deviceType = () => {
 }
 const canvas = document.getElementById("myCanvas");
 const ctx = canvas.getContext("2d");
+const background = document.getElementById("clouds");
+
 localStorage.device = deviceType();
 
 if(localStorage.device == ("mobile" || "tablet")){
-    let de = document.documentElement;
-    if (de.requestFullscreen) { de.requestFullscreen(); }
-    else if (de.mozRequestFullScreen) { de.mozRequestFullScreen(); }
-    else if (de.webkitRequestFullscreen) { de.webkitRequestFullscreen(); }
-    else if (de.msRequestFullscreen) { de.msRequestFullscreen(); }
+    var de = document.documentElement;
+    de.requestFullscreen();
     screen.orientation.lock("landscape-primary");
     const jumpBtn = document.getElementById("jump");
     const rightBtn = document.getElementById("right");
@@ -48,12 +47,14 @@ if(localStorage.device == ("mobile" || "tablet")){
         e.preventDefault();
         player.left = false;
     });
+    background.style.display = "none";
 }
 canvas.width = window.innerWidth * 98/100;
 canvas.height = window.innerHeight * 95/100;
-const background = document.getElementById("clouds");
-background.style.width = canvas.width + "px";
-background.style.height = canvas.height + "px";
+if(localStorage != ("mobile" || "tablet")){
+    background.style.width = canvas.width + "px";
+    background.style.height = canvas.height + "px";
+}
 class Component {
     constructor(x, y, width, height, type) {
         this._x = x;
