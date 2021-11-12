@@ -41,7 +41,9 @@ if(localStorage.device == ("mobile" || "tablet")){
 }
 canvas.width = window.innerWidth * 98/100;
 canvas.height = window.innerHeight * 95/100;
-
+const background = document.getElementById("clouds");
+background.style.width = canvas.width + "px";
+background.style.height = canvas.height + "px";
 class Component {
     constructor(x, y, width, height, type) {
         this._x = x;
