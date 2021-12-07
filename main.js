@@ -11,7 +11,13 @@ const deviceType = () => {
 const canvas = document.getElementById("myCanvas");
 const ctx = canvas.getContext("2d");
 const background = document.getElementById("clouds");
-
+const ninMain = new Image();
+var time = 0;
+ninMain.src = 'Nin-Main.png';
+const animate = {
+    right: false,
+    left: false,
+}
 localStorage.device = deviceType();
 
 if(localStorage.device == ("mobile" || "tablet")){
@@ -63,7 +69,8 @@ class Component {
         this.types = {
             g: "green",
             "0": "none",
-            p: "pink"
+            p: "pink",
+            "P": "purple"
         }
         this._back = false;
         this._falling = true;
@@ -127,6 +134,7 @@ class Game
     {
         var g = "g";
         var p = "p";
+        var P = "P";
         this.current = 
         {
             level: 0
@@ -135,8 +143,8 @@ class Game
             
                 [
                     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, P, P, 0],
+                    [0, 0, 0, 0, 0, 0, 0, P, P, 0],
                     [0, 0, 0, 0, 0, g, g, g, 0, 0],
                     [0, g, 0, 0, 0, 0, 0, 0, 0, 0],
                     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -175,7 +183,9 @@ class Game
                             );
                     }
 
-                    
+                    if(player.collide(this.array[h][i][j]) && this.array[h][i][j].type == "P"){
+                        this.current.level += this.current.level < this.array.length ? 1: 0;
+                    }
                     if (player.collide(this.array[h][i][j]) && this.array[h][i][j].type != "0") {
                         var rockbottom = this.array[h][i][j].y - player.stats.height;
                         var rocktop = this.array[h][i][j].y + this.array[h][i][j].height + player.stats.height;
@@ -183,11 +193,14 @@ class Game
                             player.stats.y = rockbottom;
                             player.jump = false;
                             player.gravitySpeed = 0;
+                            ninMain.src = "Nin-Main.png";
+
+
 
                         }
                         else if(player.stats.y + player.stats.height < rocktop && rocktop - (player.stats.y + player.stats.height) < 6 / 5 *player.amount.y){
                             player.stats.y = this.array[h][i][j].y + this.array[h][i][j].height;
-                            player.gravitySpeed *= 2;
+                            player.gravitySpeed *= 1.5;
                         }
                         else {
                             player.gravitySpeed = 0;
@@ -205,7 +218,9 @@ class Game
 
                         }
                     }
+
                     if (!isNaN(player.stats.currentCollision[0]) && player.jump) {
+                        
                         if (!player.collide(this.array[player.stats.currentCollision[0]][player.stats.currentCollision[1]][player.stats.currentCollision[2]])) {
                             player.stats.noleft = false;
                             player.stats.noright = false;
@@ -221,29 +236,42 @@ class Game
         }
     }
     draw() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
         if (player.right && !player.stats.noright && player.stats.x + player.stats.width + player.amount.x < canvas.width) {
             player.stats.x += player.amount.x;
             player.stats.noleft = false;
+            ninMain.src = "Nin-Sprite.png";
+            player.stats.spriteRow = 1;
+
         }
 
 
         if (player.left && !player.stats.noleft && player.stats.x - player.amount.x > 0) {
             player.stats.x -= player.amount.x;
             player.stats.noright = false;
-        }
-        if(player.stats.x + player.stats.width +  player.amount.x > canvas.width && game.current.level + 1 < game.array.length){
-            player.stats.x = 0;
-            game.current.level += 1;
+            ninMain.src = "Nin-Sprite.png";
+            player.stats.spriteRow = 0;
+
+            
+
+
         }
 
         if (player.jump) {
             player.stats.y -= player.amount.y;
+            player.stats.spriteRow = 2;
+
+
         }
-        player.draw();
+        time += 10;
         game.canvas();
         player.stats.y += player.gravitySpeed;
         player.gravitySpeed += player.gravity;
+        player.draw();
+
+ 
+
+ 
+
  
     }
 }
@@ -259,7 +287,9 @@ class Player {
             height: height,
             noleft: false,
             noright: false,
-            currentCollision: ["none", "none", "none"]
+            currentCollision: ["none", "none", "none"],
+            spriteRow: 0,
+            spriteCol: 0
             }
         this._right = false;
         this._left = false;
@@ -301,12 +331,32 @@ class Player {
         this._left = value;
     }
     draw() {
+
         ctx.beginPath();
-        ctx.fillStyle = this.color;
-        ctx.strokeStyle = this.color;
-        ctx.rect(this.stats.x, this.stats.y, this.stats.width, this.stats.height);
-        ctx.fill();
-        ctx.stroke();
+        if((ninMain.src).indexOf("Nin-Main.png") > -1){
+        ctx.drawImage(ninMain,
+            this.stats.x,
+            this.stats.y,
+            this.stats.width, this.stats.height); 
+        }
+        if((ninMain.src).indexOf("Nin-Sprite.png") > -1){
+            
+            ctx.drawImage(ninMain,
+                this.stats.spriteCol * (ninMain.width/ 4) + (ninMain.width/16) ,
+                this.stats.spriteRow * (ninMain.height/5) + (ninMain.width/16),
+                (1/2) * (ninMain.width/ 4),
+                (1/2) * (ninMain.height/5),
+                this.stats.x,
+                this.stats.y,
+                this.stats.width, 
+                this.stats.height); 
+                
+
+
+
+        
+        }       
+        
         ctx.closePath();
     }
     collide(value) {
@@ -322,40 +372,107 @@ class Player {
         }
     }
     movement = (event) => {
+
         if (event.key === "ArrowRight") {
             this.right = true;
+
         }
         if (event.key === "ArrowLeft") {
             this.left = true;
+
+
         }
 
         if (event.key === "ArrowUp" && !this.jump) {
-            this.speedY = -this.amount.y;
+            ninMain.src = "Nin-Main.png";
             this.jump = true;
+
         }
     }
     moveReset(event)
     {
         if (event.key === "ArrowRight") {
             this.right = false;
+
         }
         if (event.key === "ArrowLeft") {
             this.left = false;
+
         }
+
 
 
     }
 }
 const game = new Game();
-const player = new Player(100, 150, 30,  30, "yellow");
+const player = new Player(100, 150, canvas.width/25,  canvas.height/10, "yellow");
 
+// The sprite image frame starts from 0
+/*
+let currentFrame = 0;
+
+setInterval(function()
+{
+    let sprite = new Image();
+    sprite.src = "Nin-Sprite.png";
+    let numColumns = 4;
+    let numRows = 5;
+    // Define the size of a frame
+    let frameWidth = sprite.width / numColumns;;
+    let frameHeight = sprite.height / numRows;;
+
+    // Pick a new frame
+    currentFrame++;
+
+    // Make the frames loop
+    let maxFrame = numColumns  - 1;
+    if (currentFrame > maxFrame){
+        currentFrame = 0;
+    }
+
+    // Update rows and columns
+    var column = currentFrame % numColumns;
+    var row = Math.floor(currentFrame / numColumns);
+
+    // Clear and draw
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(sprite, column * frameWidth, row * frameHeight, frameWidth, frameHeight, 10, 30, frameWidth/9, frameHeight/7);
+    game.draw();
+
+
+//Wait for next step in the loop
+}, 100);*/
 
 document.addEventListener("keydown", function () {
+
     player.movement(event);
+    
 });
 document.addEventListener("keyup", function () {
+
     player.moveReset(event);
+  
 });
+
 setInterval(function () {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
     game.draw();
 }, 10);
+setInterval(function(){
+    if(!player.jump && (player.left || player.right))
+    player.stats.spriteCol = player.stats.spriteCol < 3 ?  player.stats.spriteCol + 1: 0 ;
+     if(player.jump && player.left) player.stats.spriteCol = 0;
+     if(player.jump && player.right) player.stats.spriteCol = 2;
+    if((player.amount.y - player.gravitySpeed) < 0 && player.left){
+        ninMain.src = "Nin-Sprite.png";
+        player.stats.spriteRow = 2;
+        player.stats.spriteCol = 1;
+    }
+    if((player.amount.y - player.gravitySpeed) < 0 && player.right){
+        ninMain.src = "Nin-Sprite.png";
+        player.stats.spriteRow = 2;
+        player.stats.spriteCol = 3;
+    }
+
+
+}, 100);
