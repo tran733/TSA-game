@@ -193,7 +193,6 @@ class Game
                             player.stats.y = rockbottom;
                             player.jump = false;
                             player.gravitySpeed = 0;
-                            ninMain.src = "Nin-Main.png";
 
 
 
