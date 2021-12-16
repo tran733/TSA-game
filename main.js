@@ -66,16 +66,25 @@ class Component {
         this._y = y;
         this.width = width;
         this.height = height;
+
         this.types = {
             g: "green",
             "0": "none",
             p: "pink",
-            "P": "purple"
+            "P": "purple",
+            "c": "coin.png",
+            "t": "platform.png"
+        }
+        this.images = {
+            "c": {x: 0.3, row: 1, cols: 3, multiplierX1: 0.3, multiplierX2: 0.6, width: 50, multiplierY1: 0.1, multiplierY2: 0.25},
+            "t": {image: 1, row: 1, cols: 1, multiplierX1: 1, multiplierX2: 1, width: this.width, multiplierY1: 1, multiplierY2: 1}
         }
         this._back = false;
         this._falling = true;
         this.type = type;
         this.color = this.types[`${this.type}`];
+        this.frame = 0;
+        this.time = 0;
     }
     get x() {
         return this._x;
@@ -101,6 +110,7 @@ class Component {
     set y(value) {
         this._y = value;
     }
+
     collide(value) {
         if (value.x < this.x + this.width &&
             value.x + value.width > this.x &&
@@ -115,6 +125,29 @@ class Component {
     }
     draw() {
         ctx.beginPath();
+        if(this.types[`${this.type}`].indexOf(".") > -1){
+            var img = new Image();
+            img.src = this.types[`${this.type}`];
+            if(this.images[this.type].image != 1){
+            var rows = Math.floor(this.frame / this.images[this.type].cols);
+            var col = this.frame % this.images[this.type].cols;
+            this.width = this.images[this.type].width;
+            ctx.drawImage(img,
+                 col * (img.width/this.images[this.type].cols) + (this.images[this.type].multiplierX1 * img.width/this.images[this.type].cols ),
+                  rows * (img.height/this.images[this.type].row) + (this.images[this.type].multiplierY1 * img.height/this.images[this.type].row),
+                   img.width/this.images[this.type].cols -  (this.images[this.type].multiplierX2 * img.width/this.images[this.type].cols),
+                    img.height/this.images[this.type].row - (this.images[this.type].multiplierY2 *  img.height/this.images[this.type].row)
+                    , this.x , this.y, this.width , this.height);
+            if(String(this.time / 250).indexOf(".") == -1){
+                this.frame = this.frame < (this.images[this.type].row + this.images[this.type].cols - 2) ? this.frame + 1: 0;
+            }
+        }
+        else
+        {
+            ctx.drawImage(img, this.x, this.y,this.width, this.height)
+        }
+        }
+        else{
         if (this.type == "0") {
             ctx.globalAlpha = 0.0;
         }
@@ -123,8 +156,10 @@ class Component {
         ctx.rect(this.x, this.y, this.width, this.height);
         ctx.fill();
         ctx.stroke();
-        ctx.closePath();
         ctx.globalAlpha = 1;
+        }
+        ctx.closePath();
+        this.time += 10;
 
     }
 }
@@ -135,6 +170,8 @@ class Game
         var g = "g";
         var p = "p";
         var P = "P";
+        var c = "c";
+        var t = "t"
         this.current = 
         {
             level: 0
@@ -144,13 +181,13 @@ class Game
                 [
                     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                     [0, 0, 0, 0, 0, 0, 0, P, P, 0],
-                    [0, 0, 0, 0, 0, 0, 0, P, P, 0],
+                    [0, 0, 0, 0, 0, c, c, P, P, 0],
                     [0, 0, 0, 0, 0, g, g, g, 0, 0],
                     [0, g, 0, 0, 0, 0, 0, 0, 0, 0],
                     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                    [0, 0, g, 0, g, 0, g, 0, 0, 0],
-                    [g, g, g, g, g, g, g, g, g, g],
+                    [0, 0, t, 0, t, 0, t, 0, 0, 0],
+                    [t, t, g, t, g, t, g, t, t, t],
                     [g, g, g, g, g, g, g, g, g, g]
                 ]
             ,
@@ -193,6 +230,8 @@ class Game
                             player.stats.y = rockbottom;
                             player.jump = false;
                             player.gravitySpeed = 0;
+                            if(!(player.right || player.left))
+                            ninMain.src = "Nin-Main.png";
 
 
 
@@ -390,6 +429,8 @@ class Player {
     }
     moveReset(event)
     {
+        ninMain.src = "Nin-Main.png";
+
         if (event.key === "ArrowRight") {
             this.right = false;
 
@@ -458,7 +499,7 @@ setInterval(function () {
     game.draw();
 }, 10);
 setInterval(function(){
-    if(!player.jump && (player.left || player.right))
+    if(!player.jump)
     player.stats.spriteCol = player.stats.spriteCol < 3 ?  player.stats.spriteCol + 1: 0 ;
      if(player.jump && player.left) player.stats.spriteCol = 0;
      if(player.jump && player.right) player.stats.spriteCol = 2;
