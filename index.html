@@ -11,6 +11,8 @@ const deviceType = () => {
 const canvas = document.getElementById("myCanvas");
 const ctx = canvas.getContext("2d");
 const background = document.getElementById("clouds");
+const mainMusic = document.getElementById("mainMusic");
+
 const ninMain = new Image();
 var time = 0;
 ninMain.src = 'Nin-Main.png';
@@ -556,8 +558,10 @@ setInterval(function()
 
 //Wait for next step in the loop
 }, 100);*/
-
-document.addEventListener("keydown", function () {
+function start(){
+    mainMusic.play();
+    document.getElementsByClassName("bg-text")[0].style.display = "none";
+    document.addEventListener("keydown", function () {
 
     player.movement(event);
     
@@ -593,3 +597,4 @@ setInterval(function(){
     }
 }
 }, 10);
+}
