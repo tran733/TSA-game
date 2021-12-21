@@ -11,6 +11,8 @@ const deviceType = () => {
 const canvas = document.getElementById("myCanvas");
 const ctx = canvas.getContext("2d");
 const background = document.getElementById("clouds");
+const mainMusic = document.getElementById("mainMusic");
+
 const ninMain = new Image();
 var time = 0;
 ninMain.src = 'Nin-Main.png';
@@ -225,7 +227,6 @@ class Game
                             this.array[h][i][j]
                             );
                     }
-
                     if(player.collide(this.array[h][i][j]) && this.array[h][i][j].type == "P"){
                         this.current.level += this.current.level < this.array.length ? 1: 0;
                     }
@@ -247,8 +248,6 @@ class Game
                             player.gravitySpeed = 0;
                             if(!(player.right || player.left))
                             ninMain.src = "Nin-Main.png";
-
-
 
                         }
                         else if(player.stats.y + player.stats.height < rocktop && rocktop - (player.stats.y + player.stats.height) < 6 / 5 *player.amount.y){
@@ -369,7 +368,7 @@ class Player {
         this.color = color;
         this._speedY = 0;
         this.amount = { x: 3, y: 4 }
-        this.gravity = 0.05;
+        this.gravity = 0.06;
         this._gravitySpeed = 0;
     }
     get throw(){
@@ -418,12 +417,31 @@ class Player {
             this.stats.width, this.stats.height); 
         }
         if((ninMain.src).indexOf("Nin-Sprite.png") > -1){
-            console.log(this.stats.shoot);
+            ninMain.src = "Nin-Sprite.png";
+
+            if(!player.jump && !player.throw)
+            player.stats.spriteCol = player.stats.spriteCol < 3 ?  player.stats.spriteCol + 1: 0 ;
+            if((player.jump) && player.left) player.stats.spriteCol = 0;
+            if((player.jump) && player.right) player.stats.spriteCol = 2;
+        
+           if((player.amount.y - player.gravitySpeed) < 0 && player.left){
+               ninMain.src = "Nin-Sprite.png";
+               player.stats.spriteRow = 2;
+               player.stats.spriteCol = 1;
+           }
+           if((player.amount.y - player.gravitySpeed) < 0 && player.right){
+               ninMain.src = "Nin-Sprite.png";
+               player.stats.spriteRow = 2;
+               player.stats.spriteCol = 3;
+           }
             if(this.stats.shoot && this.right){
+                ninMain.src = "Nin-Sprite.png";
                 this.stats.spriteCol = 3;
                 this.stats.spriteRow = 3;
             }
             if(this.stats.shoot && this.left){
+                ninMain.src = "Nin-Sprite.png";
+
                 this.stats.spriteCol = 2;
                 this.stats.spriteRow = 3;
             }
@@ -540,8 +558,10 @@ setInterval(function()
 
 //Wait for next step in the loop
 }, 100);*/
-
-document.addEventListener("keydown", function () {
+function start(){
+    mainMusic.play();
+    document.getElementsByClassName("bg-text")[0].style.display = "none";
+    document.addEventListener("keydown", function () {
 
     player.movement(event);
     
@@ -551,6 +571,7 @@ document.addEventListener("keyup", function () {
     player.moveReset(event);
   
 });
+
 
 setInterval(function () {
     game.draw();
@@ -576,26 +597,4 @@ setInterval(function(){
     }
 }
 }, 10);
-setInterval(function(){
-    if(!player.jump && !player.throw)
-    player.stats.spriteCol = player.stats.spriteCol < 3 ?  player.stats.spriteCol + 1: 0 ;
-     if((player.jump) && player.left) player.stats.spriteCol = 0;
-     if((player.jump) && player.right) player.stats.spriteCol = 2;
-     if(player.throw) 
-     {
-        ninMain.src = "Nin-Sprite.png" ;
-       player.stats.spriteCol = 3;
-        player.stats.spriteRow = 3;
-    }
-    if((player.amount.y - player.gravitySpeed) < 0 && player.left){
-        ninMain.src = "Nin-Sprite.png";
-        player.stats.spriteRow = 2;
-        player.stats.spriteCol = 1;
-    }
-    if((player.amount.y - player.gravitySpeed) < 0 && player.right){
-        ninMain.src = "Nin-Sprite.png";
-        player.stats.spriteRow = 2;
-        player.stats.spriteCol = 3;
-    }
-
-}, 100);
+}
