@@ -14,10 +14,7 @@ const background = document.getElementById("clouds");
 const ninMain = new Image();
 var time = 0;
 ninMain.src = 'Nin-Main.png';
-const animate = {
-    right: false,
-    left: false,
-}
+
 localStorage.device = deviceType();
 
 if(localStorage.device == ("mobile" || "tablet")){
@@ -61,7 +58,7 @@ if(localStorage != ("mobile" || "tablet")){
     background.style.height = canvas.height + "px";
 }
 class Component {
-    constructor(x, y, width, height, type) {
+    constructor(x, y, width, height, type, move = "") {
         this._x = x;
         this._y = y;
         this.width = width;
@@ -73,12 +70,19 @@ class Component {
             p: "pink",
             "P": "purple",
             "c": "coin.png",
-            "t": "platform.png"
+            "t": "platform.png",
+            "nl": "starleft.png",
+            "nr": "starright.png"
         }
         this.images = {
-            "c": {x: 0.3, row: 1, cols: 3, multiplierX1: 0.3, multiplierX2: 0.6, width: 50, multiplierY1: 0.1, multiplierY2: 0.25},
-            "t": {image: 1, row: 1, cols: 1, multiplierX1: 1, multiplierX2: 1, width: this.width, multiplierY1: 1, multiplierY2: 1}
+            "c": { row: 1, cols: 3, multiplierX1: 0.3, multiplierX2: 0.6, width: 50, height: this.height,  multiplierY1: 0.1, multiplierY2: 0.25},
+            "t": {image: 1},
+            "nl": { row: 1, cols: 1, multiplierX1: 0, multiplierX2: 0, width: 40, height: 20, multiplierY1: 0, multiplierY2: 0},
+            "nr": { row: 1, cols: 1, multiplierX1: 0, multiplierX2: 0, width: 40, height: 20, multiplierY1: 0, multiplierY2: 0}
+
+
         }
+        this.move = move;
         this._back = false;
         this._falling = true;
         this.type = type;
@@ -132,6 +136,7 @@ class Component {
             var rows = Math.floor(this.frame / this.images[this.type].cols);
             var col = this.frame % this.images[this.type].cols;
             this.width = this.images[this.type].width;
+            this.height = this.images[this.type].height;
             ctx.drawImage(img,
                  col * (img.width/this.images[this.type].cols) + (this.images[this.type].multiplierX1 * img.width/this.images[this.type].cols ),
                   rows * (img.height/this.images[this.type].row) + (this.images[this.type].multiplierY1 * img.height/this.images[this.type].row),
@@ -203,7 +208,8 @@ class Game
                 [g, g, p, g, g, g, g, g, g, g],
                 [g, g, g, g, p, g, g, g, g, g]
             ]
-        ]
+        ];
+        this.coins = 0;
     }
 
     canvas() {
@@ -222,6 +228,15 @@ class Game
 
                     if(player.collide(this.array[h][i][j]) && this.array[h][i][j].type == "P"){
                         this.current.level += this.current.level < this.array.length ? 1: 0;
+                    }
+                    if(player.collide(this.array[h][i][j]) && this.array[h][i][j].type == "c"){
+                        this.array[h][i][j] =  new Component(((canvas.width / this.array[h].length) * j),
+                        ((canvas.height / this.array[h][i].length) * i),
+                        ((canvas.width / this.array[h].length)),
+                        ((canvas.height / this.array[h][i].length)), 
+                        0
+                        );
+                        game.coins += 1;
                     }
                     if (player.collide(this.array[h][i][j]) && this.array[h][i][j].type != "0") {
                         var rockbottom = this.array[h][i][j].y - player.stats.height;
@@ -274,6 +289,13 @@ class Game
         }
     }
     draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.beginPath();
+        var text = "Coins: " + game.coins; 
+        ctx.fillStyle = "gold";
+        ctx.font = "30px Impact";    
+        ctx.fillText( text, canvas.width - (text.length * 15) , 30 );
+        ctx.closePath();
         if (player.right && !player.stats.noright && player.stats.x + player.stats.width + player.amount.x < canvas.width) {
             player.stats.x += player.amount.x;
             player.stats.noleft = false;
@@ -294,12 +316,21 @@ class Game
 
         }
 
+        if(player.throw){
+            player.throw = false;
+            var kind = player.right? {type: "nr", direction: "positive"}:
+             player.left ? {type: "nl", direction: "negative"}
+              : {type:"nr", direction: "positive"};
+              console.log(kind.direction)
+            player.stats.stars.push(new Component(player.stats.x +( kind.type == "nr" ? 100: kind.type == "nl" ? -100: 100), 
+            player.stats.y + player.stats.height/4, 50, 25, kind.type, kind.direction )); 
+            
+        }
         if (player.jump) {
             player.stats.y -= player.amount.y;
             player.stats.spriteRow = 2;
-
-
         }
+
         time += 10;
         game.canvas();
         player.stats.y += player.gravitySpeed;
@@ -310,7 +341,7 @@ class Game
 
  
 
- 
+   
     }
 }
 
@@ -323,12 +354,15 @@ class Player {
             y: y,
             width: width,
             height: height,
+            shoot: false,
             noleft: false,
             noright: false,
             currentCollision: ["none", "none", "none"],
             spriteRow: 0,
-            spriteCol: 0
+            spriteCol: 0,
+            stars: []
             }
+        this._throw = false;
         this._right = false;
         this._left = false;
         this._jump = false;
@@ -337,6 +371,12 @@ class Player {
         this.amount = { x: 3, y: 4 }
         this.gravity = 0.05;
         this._gravitySpeed = 0;
+    }
+    get throw(){
+        return this._throw;
+    }
+    set throw(value){
+        this._throw = value;
     }
     get speedY() {
         return this._speedY;
@@ -378,7 +418,15 @@ class Player {
             this.stats.width, this.stats.height); 
         }
         if((ninMain.src).indexOf("Nin-Sprite.png") > -1){
-            
+            console.log(this.stats.shoot);
+            if(this.stats.shoot && this.right){
+                this.stats.spriteCol = 3;
+                this.stats.spriteRow = 3;
+            }
+            if(this.stats.shoot && this.left){
+                this.stats.spriteCol = 2;
+                this.stats.spriteRow = 3;
+            }
             ctx.drawImage(ninMain,
                 this.stats.spriteCol * (ninMain.width/ 4) + (ninMain.width/16) ,
                 this.stats.spriteRow * (ninMain.height/5) + (ninMain.width/16),
@@ -411,34 +459,44 @@ class Player {
     }
     movement = (event) => {
 
-        if (event.key === "ArrowRight") {
+        if (event.key === "ArrowRight" || event.key == "d" || event.key == "D") {
             this.right = true;
 
         }
-        if (event.key === "ArrowLeft") {
+        if (event.key === "ArrowLeft" || event.key == "a" || event.key == "A") {
             this.left = true;
 
 
         }
+        if(event.key == " "){
+            this.throw = true;
+            this.stats.shoot = true;
+        }
 
-        if (event.key === "ArrowUp" && !this.jump) {
+        if ((event.key === "ArrowUp" || event.key == "w" || event.key == "W") && !this.jump) {
             ninMain.src = "Nin-Main.png";
             this.jump = true;
 
+            
         }
+        
+
     }
     moveReset(event)
     {
         ninMain.src = "Nin-Main.png";
-
-        if (event.key === "ArrowRight") {
+        if (event.key === "ArrowRight" || event.key == "d" || event.key == "D") {
             this.right = false;
 
         }
-        if (event.key === "ArrowLeft") {
+        if (event.key === "ArrowLeft" || event.key == "a" || event.key == "A") {
             this.left = false;
 
         }
+        if(event.key === " "){
+            this.stats.shoot = false;
+        }
+
 
 
 
@@ -495,14 +553,40 @@ document.addEventListener("keyup", function () {
 });
 
 setInterval(function () {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
     game.draw();
 }, 10);
 setInterval(function(){
-    if(!player.jump)
+    if(player.stats.stars.length != 0){
+        
+    for(var i = 0; i < player.stats.stars.length; i++){
+        player.stats.stars[i].draw();
+        for (let j = 0; j < game.array[game.current.level].length; j++) {
+            
+            for (let k = 0; k < game.array[game.current.level][j].length; k++) {
+                if(player.stats.stars.length == 0){
+                    return;
+                }
+                if(player.stats.stars[i].collide(game.array[game.current.level][j][k]) && game.array[game.current.level][j][k].type != 0){
+                   player.stats.stars.splice(i, 1);
+                }
+            }
+        }
+        player.stats.stars[i].x += player.stats.stars[i].move == "positive" ? 5 : player.stats.stars[i].move == "negative" ? -5: 5 ;
+        if(player.stats.stars[i].x > canvas.width) player.stats.stars.shift();
+    }
+}
+}, 10);
+setInterval(function(){
+    if(!player.jump && !player.throw)
     player.stats.spriteCol = player.stats.spriteCol < 3 ?  player.stats.spriteCol + 1: 0 ;
-     if(player.jump && player.left) player.stats.spriteCol = 0;
-     if(player.jump && player.right) player.stats.spriteCol = 2;
+     if((player.jump) && player.left) player.stats.spriteCol = 0;
+     if((player.jump) && player.right) player.stats.spriteCol = 2;
+     if(player.throw) 
+     {
+        ninMain.src = "Nin-Sprite.png" ;
+       player.stats.spriteCol = 3;
+        player.stats.spriteRow = 3;
+    }
     if((player.amount.y - player.gravitySpeed) < 0 && player.left){
         ninMain.src = "Nin-Sprite.png";
         player.stats.spriteRow = 2;
@@ -513,6 +597,5 @@ setInterval(function(){
         player.stats.spriteRow = 2;
         player.stats.spriteCol = 3;
     }
-
 
 }, 100);
