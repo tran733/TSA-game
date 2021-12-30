@@ -12,10 +12,17 @@ const canvas = document.getElementById("myCanvas");
 const ctx = canvas.getContext("2d");
 const background = document.getElementById("clouds");
 const mainMusic = document.getElementById("mainMusic");
-
+const heart = new Image();
+heart.src = "heart.png";
 const ninMain = new Image();
-var time = 0;
 ninMain.src = 'Nin-Main.png';
+const ninSprite = new Image();
+ninSprite.src = "Nin-Sprite.png";
+var currentSprite = "ninMain";
+var time = 0;
+function whichSprite(){
+    return currentSprite == "ninMain" ? ninMain : ninSprite;
+}
 
 localStorage.device = deviceType();
 
@@ -60,12 +67,17 @@ if(localStorage != ("mobile" || "tablet")){
     background.style.height = canvas.height + "px";
 }
 class Component {
-    constructor(x, y, width, height, type, move = "") {
+    constructor(x, y, width, height, type, move = "", moveAmount) {
         this._x = x;
         this._y = y;
         this.width = width;
         this.height = height;
-
+        if(type == "m"){
+            this.width = 50;
+            this.height = 50;
+            this.y += 15;
+            console.log(game.avgTileWidth);
+        }
         this.types = {
             g: "green",
             "0": "none",
@@ -74,7 +86,8 @@ class Component {
             "c": "coin.png",
             "t": "platform.png",
             "nl": "starleft.png",
-            "nr": "starright.png"
+            "nr": "starright.png",
+            "m" : "lime"
         }
         this.images = {
             "c": { row: 1, cols: 3, multiplierX1: 0.3, multiplierX2: 0.6, width: 50, height: this.height,  multiplierY1: 0.1, multiplierY2: 0.25},
@@ -84,12 +97,21 @@ class Component {
 
 
         }
+        this.image;
+      
+        this.moveTiles = moveAmount;
+        this.moveMax = Math.abs(this.moveTiles) * Math.round(game.avgTileWidth);
+        this.walkingDistance = 0;
         this.move = move;
         this._back = false;
         this._falling = true;
         this.type = type;
         this.color = this.types[`${this.type}`];
         this.frame = 0;
+        if(this.types[`${this.type}`].indexOf(".") > -1){
+            this.image = new Image();
+            this.image.src = this.types[`${this.type}`];
+        }
         this.time = 0;
     }
     get x() {
@@ -132,18 +154,17 @@ class Component {
     draw() {
         ctx.beginPath();
         if(this.types[`${this.type}`].indexOf(".") > -1){
-            var img = new Image();
-            img.src = this.types[`${this.type}`];
+    
             if(this.images[this.type].image != 1){
             var rows = Math.floor(this.frame / this.images[this.type].cols);
             var col = this.frame % this.images[this.type].cols;
             this.width = this.images[this.type].width;
             this.height = this.images[this.type].height;
-            ctx.drawImage(img,
-                 col * (img.width/this.images[this.type].cols) + (this.images[this.type].multiplierX1 * img.width/this.images[this.type].cols ),
-                  rows * (img.height/this.images[this.type].row) + (this.images[this.type].multiplierY1 * img.height/this.images[this.type].row),
-                   img.width/this.images[this.type].cols -  (this.images[this.type].multiplierX2 * img.width/this.images[this.type].cols),
-                    img.height/this.images[this.type].row - (this.images[this.type].multiplierY2 *  img.height/this.images[this.type].row)
+            ctx.drawImage(this.image,
+                 col * (this.image.width/this.images[this.type].cols) + (this.images[this.type].multiplierX1 * this.image.width/this.images[this.type].cols ),
+                  rows * (this.image.height/this.images[this.type].row) + (this.images[this.type].multiplierY1 * this.image.height/this.images[this.type].row),
+                   this.image.width/this.images[this.type].cols -  (this.images[this.type].multiplierX2 * this.image.width/this.images[this.type].cols),
+                    this.image.height/this.images[this.type].row - (this.images[this.type].multiplierY2 *  this.image.height/this.images[this.type].row)
                     , this.x , this.y, this.width , this.height);
             if(String(this.time / 250).indexOf(".") == -1){
                 this.frame = this.frame < (this.images[this.type].row + this.images[this.type].cols - 2) ? this.frame + 1: 0;
@@ -151,7 +172,7 @@ class Component {
         }
         else
         {
-            ctx.drawImage(img, this.x, this.y,this.width, this.height)
+            ctx.drawImage(this.image, this.x, this.y,this.width, this.height)
         }
         }
         else{
@@ -166,6 +187,15 @@ class Component {
         ctx.globalAlpha = 1;
         }
         ctx.closePath();
+        if(this.moveTiles != 0 && this.walkingDistance < this.moveMax){
+           this.walkingDistance += Math.abs(this.moveTiles);
+           this.x += this.moveTiles;
+        }
+        else if (this.walkingDistance >= this.moveMax){
+            this.walkingDistance = 0;
+            this.moveTiles = -this.moveTiles;
+        }
+
         this.time += 10;
 
     }
@@ -178,7 +208,7 @@ class Game
         var p = "p";
         var P = "P";
         var c = "c";
-        var t = "t"
+        var t = "t";
         this.current = 
         {
             level: 0
@@ -193,7 +223,7 @@ class Game
                     [0, g, 0, 0, 0, 0, 0, 0, 0, 0],
                     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                    [0, 0, t, 0, t, 0, t, 0, 0, 0],
+                    [0, 0, t, 0, t, 0, t, 0, 0, "m:-2"],
                     [t, t, g, t, g, t, g, t, t, t],
                     [g, g, g, g, g, g, g, g, g, g]
                 ]
@@ -211,6 +241,8 @@ class Game
                 [g, g, g, g, p, g, g, g, g, g]
             ]
         ];
+        this.avgTileWidth = canvas.width / this.array[0][0].length;
+
         this.coins = 0;
     }
 
@@ -224,7 +256,9 @@ class Game
                             ((canvas.height / this.array[h][i].length) * i),
                             ((canvas.width / this.array[h].length)),
                             ((canvas.height / this.array[h][i].length)), 
-                            this.array[h][i][j]
+                            String(this.array[h][i][j]).charAt(0),
+                            "",
+                            String(this.array[h][i][j]).charAt(0) == "m" ? Number(String(this.array[h][i][j]).split(":")[1]) : 0
                             );
                     }
                     if(player.collide(this.array[h][i][j]) && this.array[h][i][j].type == "P"){
@@ -247,7 +281,7 @@ class Game
                             player.jump = false;
                             player.gravitySpeed = 0;
                             if(!(player.right || player.left))
-                            ninMain.src = "Nin-Main.png";
+                            currentSprite = "ninMain";
 
                         }
                         else if(player.stats.y + player.stats.height < rocktop && rocktop - (player.stats.y + player.stats.height) < 6 / 5 *player.amount.y){
@@ -289,16 +323,17 @@ class Game
     }
     draw() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
+        coin.draw();
         ctx.beginPath();
-        var text = "Coins: " + game.coins; 
+        var text = game.coins; 
         ctx.fillStyle = "gold";
         ctx.font = "30px Impact";    
-        ctx.fillText( text, canvas.width - (text.length * 15) , 30 );
+        ctx.fillText( text, canvas.width - 75 , 45 );
         ctx.closePath();
         if (player.right && !player.stats.noright && player.stats.x + player.stats.width + player.amount.x < canvas.width) {
             player.stats.x += player.amount.x;
             player.stats.noleft = false;
-            ninMain.src = "Nin-Sprite.png";
+            currentSprite = "ninSprite";
             player.stats.spriteRow = 1;
 
         }
@@ -307,7 +342,7 @@ class Game
         if (player.left && !player.stats.noleft && player.stats.x - player.amount.x > 0) {
             player.stats.x -= player.amount.x;
             player.stats.noright = false;
-            ninMain.src = "Nin-Sprite.png";
+            currentSprite = "ninSprite";
             player.stats.spriteRow = 0;
 
             
@@ -315,13 +350,15 @@ class Game
 
         }
 
-        if(player.throw){
+        if(player.throw ){
             player.throw = false;
             var kind = player.right? {type: "nr", direction: "positive"}:
              player.left ? {type: "nl", direction: "negative"}
               : {type:"nr", direction: "positive"};
-              console.log(kind.direction)
-            player.stats.stars.push(new Component(player.stats.x +( kind.type == "nr" ? 100: kind.type == "nl" ? -100: 100), 
+              var startingpoint = player.stats.x +( kind.type == "nr" ? 100: kind.type == "nl" ? -100: 100);
+
+              if(player.stats.stars.length == 0 || player.stats.stars[player.stats.stars.length - 1].x - startingpoint > 200 )
+            player.stats.stars.push(new Component( startingpoint, 
             player.stats.y + player.stats.height/4, 50, 25, kind.type, kind.direction )); 
             
         }
@@ -361,6 +398,7 @@ class Player {
             spriteCol: 0,
             stars: []
             }
+        this._health = 3;
         this._throw = false;
         this._right = false;
         this._left = false;
@@ -370,6 +408,12 @@ class Player {
         this.amount = { x: 3, y: 4 }
         this.gravity = 0.06;
         this._gravitySpeed = 0;
+    }
+    get health(){
+        return this._health;
+    }
+    set health(value){
+        this._health = value;
     }
     get throw(){
         return this._throw;
@@ -410,14 +454,14 @@ class Player {
     draw() {
 
         ctx.beginPath();
-        if((ninMain.src).indexOf("Nin-Main.png") > -1){
+        if(currentSprite == "ninMain"){
         ctx.drawImage(ninMain,
             this.stats.x,
             this.stats.y,
             this.stats.width, this.stats.height); 
         }
-        if((ninMain.src).indexOf("Nin-Sprite.png") > -1){
-            ninMain.src = "Nin-Sprite.png";
+        if(currentSprite == "ninSprite"){
+            currentSprite = "ninSprite";
 
             if(!player.jump && !player.throw)
             player.stats.spriteCol = player.stats.spriteCol < 3 ?  player.stats.spriteCol + 1: 0 ;
@@ -425,31 +469,32 @@ class Player {
             if((player.jump) && player.right) player.stats.spriteCol = 2;
         
            if((player.amount.y - player.gravitySpeed) < 0 && player.left){
-               ninMain.src = "Nin-Sprite.png";
+            currentSprite = "ninSprite";
                player.stats.spriteRow = 2;
                player.stats.spriteCol = 1;
            }
            if((player.amount.y - player.gravitySpeed) < 0 && player.right){
-               ninMain.src = "Nin-Sprite.png";
+            currentSprite = "ninSprite";
                player.stats.spriteRow = 2;
                player.stats.spriteCol = 3;
            }
             if(this.stats.shoot && this.right){
-                ninMain.src = "Nin-Sprite.png";
+                currentSprite = "ninSprite";
                 this.stats.spriteCol = 3;
                 this.stats.spriteRow = 3;
             }
             if(this.stats.shoot && this.left){
-                ninMain.src = "Nin-Sprite.png";
+                currentSprite = "ninSprite";
 
                 this.stats.spriteCol = 2;
                 this.stats.spriteRow = 3;
             }
-            ctx.drawImage(ninMain,
-                this.stats.spriteCol * (ninMain.width/ 4) + (ninMain.width/16) ,
-                this.stats.spriteRow * (ninMain.height/5) + (ninMain.width/16),
-                (1/2) * (ninMain.width/ 4),
-                (1/2) * (ninMain.height/5),
+            var sprite = whichSprite();
+            ctx.drawImage(sprite,
+                this.stats.spriteCol * (sprite.width/ 4) + (sprite.width/16) ,
+                this.stats.spriteRow * (sprite.height/5) + (sprite.width/16),
+                (1/2) * (sprite.width/ 4),
+                (1/2) * (sprite.height/5),
                 this.stats.x,
                 this.stats.y,
                 this.stats.width, 
@@ -492,7 +537,7 @@ class Player {
         }
 
         if ((event.key === "ArrowUp" || event.key == "w" || event.key == "W") && !this.jump) {
-            ninMain.src = "Nin-Main.png";
+            currentSprite = "ninMain";
             this.jump = true;
 
             
@@ -502,7 +547,7 @@ class Player {
     }
     moveReset(event)
     {
-        ninMain.src = "Nin-Main.png";
+        currentSprite = "ninMain";
         if (event.key === "ArrowRight" || event.key == "d" || event.key == "D") {
             this.right = false;
 
@@ -522,6 +567,7 @@ class Player {
 }
 const game = new Game();
 const player = new Player(100, 150, canvas.width/25,  canvas.height/10, "yellow");
+const coin = new Component(canvas.width - 150, 0, 40, 60, "c");
 
 // The sprite image frame starts from 0
 /*
@@ -593,7 +639,7 @@ setInterval(function(){
             }
         }
         player.stats.stars[i].x += player.stats.stars[i].move == "positive" ? 5 : player.stats.stars[i].move == "negative" ? -5: 5 ;
-        if(player.stats.stars[i].x > canvas.width) player.stats.stars.shift();
+        if(player.stats.stars[i].x > canvas.width || player.stats.stars[i].x < 0) player.stats.stars.shift();
     }
 }
 }, 10);
