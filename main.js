@@ -67,14 +67,15 @@ if(localStorage != ("mobile" || "tablet")){
     background.style.height = canvas.height + "px";
 }
 class Component {
-    constructor(x, y, width, height, type, move = "", moveAmount) {
+    constructor(x, y, width, height, type, move = "", moveAmount, fullType) {
         this._x = x;
         this._y = y;
         this.width = width;
         this.height = height;
+        this.fullType = fullType;
         if(type == "m"){
-            this.width = 50;
-            this.height = 50;
+            this.width = Number(this.fullType.split(":")[2]);
+            this.height = Number(this.fullType.split(":")[3]);
             this.y += 15;
             console.log(game.avgTileWidth);
         }
@@ -217,13 +218,13 @@ class Game
             
                 [
                     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 0, 0, 0, P, P, 0],
+                    [0, 0, 0, 0, 0, "m:1:100:50", 0, P, P, 0],
                     [0, 0, 0, 0, 0, c, c, P, P, 0],
                     [0, 0, 0, 0, 0, g, g, g, 0, 0],
                     [0, g, 0, 0, 0, 0, 0, 0, 0, 0],
                     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                    [0, 0, t, 0, t, 0, t, 0, 0, "m:-2"],
+                    [0, 0, "m:0.25:100:50", 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, t, 0, t, 0, t, 0, 0, "m:-2:50:50"],
                     [t, t, g, t, g, t, g, t, t, t],
                     [g, g, g, g, g, g, g, g, g, g]
                 ]
@@ -258,11 +259,16 @@ class Game
                             ((canvas.height / this.array[h][i].length)), 
                             String(this.array[h][i][j]).charAt(0),
                             "",
-                            String(this.array[h][i][j]).charAt(0) == "m" ? Number(String(this.array[h][i][j]).split(":")[1]) : 0
+                            String(this.array[h][i][j]).charAt(0) == "m" ? Number(String(this.array[h][i][j]).split(":")[1]) : 0,
+                            String(this.array[h][i][j])
                             );
                     }
                     if(player.collide(this.array[h][i][j]) && this.array[h][i][j].type == "P"){
                         this.current.level += this.current.level < this.array.length ? 1: 0;
+                    }
+                    if(player.collide(this.array[h][i][j]) && this.array[h][i][j].type == "m"){
+                        this.array[h][i][j] = 0;
+                        player.health -= 1;
                     }
                     if(player.collide(this.array[h][i][j]) && this.array[h][i][j].type == "c"){
                         this.array[h][i][j] =  new Component(((canvas.width / this.array[h].length) * j),
@@ -323,12 +329,15 @@ class Game
     }
     draw() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(heart, canvas.width - 225, 10, 40, 40)
         coin.draw();
         ctx.beginPath();
         var text = game.coins; 
         ctx.fillStyle = "gold";
         ctx.font = "30px Impact";    
         ctx.fillText( text, canvas.width - 75 , 45 );
+        ctx.fillStyle = "red";
+        ctx.fillText( player.health, canvas.width - 250 , 45 );
         ctx.closePath();
         if (player.right && !player.stats.noright && player.stats.x + player.stats.width + player.amount.x < canvas.width) {
             player.stats.x += player.amount.x;
@@ -634,7 +643,10 @@ setInterval(function(){
                     return;
                 }
                 if(player.stats.stars[i].collide(game.array[game.current.level][j][k]) && game.array[game.current.level][j][k].type != 0){
-                   player.stats.stars.splice(i, 1);
+                    if(game.array[game.current.level][j][k].type == "m"){
+                        game.array[game.current.level][j][k] = 0;
+                    }
+                    player.stats.stars.splice(i, 1);
                 }
             }
         }
