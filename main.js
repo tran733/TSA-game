@@ -8,27 +8,34 @@ const deviceType = () => {
     }
     return "desktop";
 }
+var mainTime;
+var ninjastars;
+localStorage.highScore = localStorage.highScore ? localStorage.highScore : 0;
 const canvas = document.getElementById("myCanvas");
 const ctx = canvas.getContext("2d");
 const background = document.getElementById("clouds");
 const mainMusic = document.getElementById("mainMusic");
 const heart = new Image();
 heart.src = "heart.png";
+const slimeleft = new Image();
+slimeleft.src = "slimeleft.png";
+const slimeright = new Image();
+slimeright.src = "slimeright.png";
 const ninMain = new Image();
 ninMain.src = 'Nin-Main.png';
 const ninSprite = new Image();
 ninSprite.src = "Nin-Sprite.png";
 var currentSprite = "ninMain";
 var time = 0;
-function whichSprite(){
+function whichSprite() {
     return currentSprite == "ninMain" ? ninMain : ninSprite;
 }
 
 localStorage.device = deviceType();
 
-if(localStorage.device == ("mobile" || "tablet")){
+if (localStorage.device == ("mobile" || "tablet")) {
     var e = document.getElementById('myCanvas');
-(e.webkitRequestFullScreen || e.mozRequestFullScreen || e.requestFullscreen).apply(e);
+    (e.webkitRequestFullScreen || e.mozRequestFullScreen || e.requestFullscreen).apply(e);
     screen.orientation.lock("landscape-primary");
     const jumpBtn = document.getElementById("jump");
     const rightBtn = document.getElementById("right");
@@ -37,32 +44,32 @@ if(localStorage.device == ("mobile" || "tablet")){
     container.style.display = "block";
     jumpBtn.addEventListener("touchstart", function (e) {
         e.preventDefault();
-        if(!player.jump){
-        player.speedY = -player.amount.y;
-        player.jump = true;
+        if (!player.jump) {
+            player.speedY = -player.amount.y;
+            player.jump = true;
         }
     });
 
-    rightBtn.addEventListener("touchstart", function(e){
+    rightBtn.addEventListener("touchstart", function (e) {
         e.preventDefault();
         player.right = true;
     });
-    leftBtn.addEventListener("touchstart", function(e){
+    leftBtn.addEventListener("touchstart", function (e) {
         e.preventDefault();
         player.left = true;
     });
-    rightBtn.addEventListener("touchend", function(e){
+    rightBtn.addEventListener("touchend", function (e) {
         e.preventDefault();
         player.right = false;
     });
-    leftBtn.addEventListener("touchend", function(e){
+    leftBtn.addEventListener("touchend", function (e) {
         e.preventDefault();
         player.left = false;
     });
 }
-canvas.width = window.innerWidth * 98/100;
-canvas.height = window.innerHeight * 95/100;
-if(localStorage != ("mobile" || "tablet")){
+canvas.width = window.innerWidth * 98 / 100;
+canvas.height = window.innerHeight * 95 / 100;
+if (localStorage != ("mobile" || "tablet")) {
     background.style.width = canvas.width + "px";
     background.style.height = canvas.height + "px";
 }
@@ -73,11 +80,10 @@ class Component {
         this.width = width;
         this.height = height;
         this.fullType = fullType;
-        if(type == "m"){
+        if (type == "m") {
             this.width = Number(this.fullType.split(":")[2]);
             this.height = Number(this.fullType.split(":")[3]);
-            this.y += 15;
-            console.log(game.avgTileWidth);
+            this.y += game.avgTileHeight - this.height;
         }
         this.types = {
             g: "green",
@@ -88,18 +94,19 @@ class Component {
             "t": "platform.png",
             "nl": "starleft.png",
             "nr": "starright.png",
-            "m" : "lime"
+            "m": Math.sign(moveAmount) == "-1" ? "slimeleft.png" : "slimeright.png"
         }
         this.images = {
-            "c": { row: 1, cols: 3, multiplierX1: 0.3, multiplierX2: 0.6, width: 50, height: this.height,  multiplierY1: 0.1, multiplierY2: 0.25},
-            "t": {image: 1},
-            "nl": { row: 1, cols: 1, multiplierX1: 0, multiplierX2: 0, width: 40, height: 20, multiplierY1: 0, multiplierY2: 0},
-            "nr": { row: 1, cols: 1, multiplierX1: 0, multiplierX2: 0, width: 40, height: 20, multiplierY1: 0, multiplierY2: 0}
+            "c": { row: 1, cols: 3, multiplierX1: 0.3, multiplierX2: 0.6, width: 50, height: this.height, multiplierY1: 0.1, multiplierY2: 0.25 },
+            "t": { image: 1 },
+            "m": { image: 1 },
+            "nl": { row: 1, cols: 1, multiplierX1: 0, multiplierX2: 0, width: 40, height: 20, multiplierY1: 0, multiplierY2: 0 },
+            "nr": { row: 1, cols: 1, multiplierX1: 0, multiplierX2: 0, width: 40, height: 20, multiplierY1: 0, multiplierY2: 0 }
 
 
         }
         this.image;
-      
+
         this.moveTiles = moveAmount;
         this.moveMax = Math.abs(this.moveTiles) * Math.round(game.avgTileWidth);
         this.walkingDistance = 0;
@@ -109,7 +116,7 @@ class Component {
         this.type = type;
         this.color = this.types[`${this.type}`];
         this.frame = 0;
-        if(this.types[`${this.type}`].indexOf(".") > -1){
+        if (this.types[`${this.type}`].indexOf(".") > -1) {
             this.image = new Image();
             this.image.src = this.types[`${this.type}`];
         }
@@ -154,80 +161,80 @@ class Component {
     }
     draw() {
         ctx.beginPath();
-        if(this.types[`${this.type}`].indexOf(".") > -1){
-    
-            if(this.images[this.type].image != 1){
-            var rows = Math.floor(this.frame / this.images[this.type].cols);
-            var col = this.frame % this.images[this.type].cols;
-            this.width = this.images[this.type].width;
-            this.height = this.images[this.type].height;
-            ctx.drawImage(this.image,
-                 col * (this.image.width/this.images[this.type].cols) + (this.images[this.type].multiplierX1 * this.image.width/this.images[this.type].cols ),
-                  rows * (this.image.height/this.images[this.type].row) + (this.images[this.type].multiplierY1 * this.image.height/this.images[this.type].row),
-                   this.image.width/this.images[this.type].cols -  (this.images[this.type].multiplierX2 * this.image.width/this.images[this.type].cols),
-                    this.image.height/this.images[this.type].row - (this.images[this.type].multiplierY2 *  this.image.height/this.images[this.type].row)
-                    , this.x , this.y, this.width , this.height);
-            if(String(this.time / 250).indexOf(".") == -1){
-                this.frame = this.frame < (this.images[this.type].row + this.images[this.type].cols - 2) ? this.frame + 1: 0;
+        if (this.types[`${this.type}`].indexOf(".") > -1) {
+
+            if (this.images[this.type].image != 1) {
+                var rows = Math.floor(this.frame / this.images[this.type].cols);
+                var col = this.frame % this.images[this.type].cols;
+                this.width = this.images[this.type].width;
+                this.height = this.images[this.type].height;
+                ctx.drawImage(this.image,
+                    col * (this.image.width / this.images[this.type].cols) + (this.images[this.type].multiplierX1 * this.image.width / this.images[this.type].cols),
+                    rows * (this.image.height / this.images[this.type].row) + (this.images[this.type].multiplierY1 * this.image.height / this.images[this.type].row),
+                    this.image.width / this.images[this.type].cols - (this.images[this.type].multiplierX2 * this.image.width / this.images[this.type].cols),
+                    this.image.height / this.images[this.type].row - (this.images[this.type].multiplierY2 * this.image.height / this.images[this.type].row)
+                    , this.x, this.y, this.width, this.height);
+                if (String(this.time / 250).indexOf(".") == -1) {
+                    this.frame = this.frame < (this.images[this.type].row + this.images[this.type].cols - 2) ? this.frame + 1 : 0;
+                }
+            }
+            else {
+                ctx.drawImage(this.image, this.x, this.y, this.width, this.height)
             }
         }
-        else
-        {
-            ctx.drawImage(this.image, this.x, this.y,this.width, this.height)
-        }
-        }
-        else{
-        if (this.type == "0") {
-            ctx.globalAlpha = 0.0;
-        }
-        ctx.fillStyle = this.color;
-        ctx.strokeStyle = this.color;
-        ctx.rect(this.x, this.y, this.width, this.height);
-        ctx.fill();
-        ctx.stroke();
-        ctx.globalAlpha = 1;
+        else {
+            if (this.type == "0") {
+                ctx.globalAlpha = 0.0;
+            }
+            ctx.fillStyle = this.color;
+            ctx.strokeStyle = this.color;
+            ctx.rect(this.x, this.y, this.width, this.height);
+            ctx.fill();
+            ctx.stroke();
+            ctx.globalAlpha = 1;
         }
         ctx.closePath();
-        if(this.moveTiles != 0 && this.walkingDistance < this.moveMax){
-           this.walkingDistance += Math.abs(this.moveTiles);
-           this.x += this.moveTiles;
+        if (this.moveTiles != 0 && this.walkingDistance < this.moveMax) {
+            this.walkingDistance += Math.abs(this.moveTiles);
+            this.x += this.moveTiles;
         }
-        else if (this.walkingDistance >= this.moveMax){
+        else if (this.walkingDistance >= this.moveMax) {
             this.walkingDistance = 0;
             this.moveTiles = -this.moveTiles;
+            if(this.type == "m"){
+                this.image = this.image.src.indexOf("slimeright.png") > -1 ? slimeleft : slimeright;
+            }
         }
 
         this.time += 10;
 
     }
 }
-class Game
-{
-    constructor()
-    {
+class Game {
+    constructor() {
         var g = "g";
         var p = "p";
         var P = "P";
         var c = "c";
         var t = "t";
-        this.current = 
+        this.current =
         {
             level: 0
         };
         this.array = [
-            
-                [
-                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 0, "m:1:100:50", 0, P, P, 0],
-                    [0, 0, 0, 0, 0, c, c, P, P, 0],
-                    [0, 0, 0, 0, 0, g, g, g, 0, 0],
-                    [0, g, 0, 0, 0, 0, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                    [0, 0, "m:0.25:100:50", 0, 0, 0, 0, 0, 0, 0],
-                    [0, 0, t, 0, t, 0, t, 0, 0, "m:-2:50:50"],
-                    [t, t, g, t, g, t, g, t, t, t],
-                    [g, g, g, g, g, g, g, g, g, g]
-                ]
+
+            [
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, "m:1:100:60", 0, P, P, 0],
+                [0, 0, 0, 0, 0, c, c, P, P, 0],
+                [0, 0, 0, 0, 0, g, g, g, 0, 0],
+                [0, g, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, "m:0.25:100:60", 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, t, 0, t, 0, t, 0, 0, "m:-2:70:50"],
+                [t, t, g, t, g, t, g, t, t, t],
+                [g, g, g, g, g, g, g, g, g, g]
+            ]
             ,
             [
                 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -243,101 +250,107 @@ class Game
             ]
         ];
         this.avgTileWidth = canvas.width / this.array[0][0].length;
+        this.avgTileHeight= canvas.height / this.array[0].length;
 
         this.coins = 0;
     }
 
     canvas() {
-            var h = this.current.level;
+        var h = this.current.level;
 
-            for (let i = 0; i < this.array[h].length; i++) {
-                for (let j = 0; j < this.array[h][i].length; j++) {
-                    if (!isNaN(this.array[h][i][j]) || typeof this.array[h][i][j] == "string") {
-                        this.array[h][i][j] = new Component(((canvas.width / this.array[h].length) * j),
-                            ((canvas.height / this.array[h][i].length) * i),
-                            ((canvas.width / this.array[h].length)),
-                            ((canvas.height / this.array[h][i].length)), 
-                            String(this.array[h][i][j]).charAt(0),
-                            "",
-                            String(this.array[h][i][j]).charAt(0) == "m" ? Number(String(this.array[h][i][j]).split(":")[1]) : 0,
-                            String(this.array[h][i][j])
-                            );
-                    }
-                    if(player.collide(this.array[h][i][j]) && this.array[h][i][j].type == "P"){
-                        this.current.level += this.current.level < this.array.length ? 1: 0;
-                    }
-                    if(player.collide(this.array[h][i][j]) && this.array[h][i][j].type == "m"){
-                        this.array[h][i][j] = 0;
-                        player.health -= 1;
-                    }
-                    if(player.collide(this.array[h][i][j]) && this.array[h][i][j].type == "c"){
-                        this.array[h][i][j] =  new Component(((canvas.width / this.array[h].length) * j),
+        for (let i = 0; i < this.array[h].length; i++) {
+            for (let j = 0; j < this.array[h][i].length; j++) {
+                if (!isNaN(this.array[h][i][j]) || typeof this.array[h][i][j] == "string") {
+                    this.array[h][i][j] = new Component(((canvas.width / this.array[h].length) * j),
                         ((canvas.height / this.array[h][i].length) * i),
                         ((canvas.width / this.array[h].length)),
-                        ((canvas.height / this.array[h][i].length)), 
+                        ((canvas.height / this.array[h][i].length)),
+                        String(this.array[h][i][j]).charAt(0),
+                        "",
+                        String(this.array[h][i][j]).charAt(0) == "m" ? Number(String(this.array[h][i][j]).split(":")[1]) : 0,
+                        String(this.array[h][i][j])
+                    );
+                }
+                if (player.collide(this.array[h][i][j]) && this.array[h][i][j].type == "P") {
+                    this.current.level += this.current.level < this.array.length ? 1 : 0;
+                }
+                if (player.collide(this.array[h][i][j]) && this.array[h][i][j].type == "m") {
+                    this.array[h][i][j] = 0;
+                    player.health -= 1;
+                }
+                if (player.collide(this.array[h][i][j]) && this.array[h][i][j].type == "c") {
+                    this.array[h][i][j] = new Component(((canvas.width / this.array[h].length) * j),
+                        ((canvas.height / this.array[h][i].length) * i),
+                        ((canvas.width / this.array[h].length)),
+                        ((canvas.height / this.array[h][i].length)),
                         0
-                        );
-                        game.coins += 1;
-                    }
-                    if (player.collide(this.array[h][i][j]) && this.array[h][i][j].type != "0") {
-                        var rockbottom = this.array[h][i][j].y - player.stats.height;
-                        var rocktop = this.array[h][i][j].y + this.array[h][i][j].height + player.stats.height;
-                        if (player.stats.y > rockbottom && player.stats.y - rockbottom < 6 / 5 *player.amount.y/* && (player.stats.y + player.stats.height) - this.array[h][i][j].y < 3*/) {
-                            player.stats.y = rockbottom;
-                            player.jump = false;
-                            player.gravitySpeed = 0;
-                            if(!(player.right || player.left))
+                    );
+                    game.coins += 1;
+                }
+                if (player.collide(this.array[h][i][j]) && this.array[h][i][j].type != "0") {
+                    var rockbottom = this.array[h][i][j].y - player.stats.height;
+                    var rocktop = this.array[h][i][j].y + this.array[h][i][j].height + player.stats.height;
+                    if (player.stats.y > rockbottom && player.stats.y - rockbottom < 6 / 5 * player.amount.y/* && (player.stats.y + player.stats.height) - this.array[h][i][j].y < 3*/) {
+                        player.stats.y = rockbottom;
+                        player.jump = false;
+                        player.gravitySpeed = 0;
+                        if (!(player.right || player.left))
                             currentSprite = "ninMain";
 
-                        }
-                        else if(player.stats.y + player.stats.height < rocktop && rocktop - (player.stats.y + player.stats.height) < 6 / 5 *player.amount.y){
-                            player.stats.y = this.array[h][i][j].y + this.array[h][i][j].height;
-                            player.gravitySpeed *= 1.5;
-                        }
-                        else {
-                            player.gravitySpeed = 0;
-                            if (player.stats.x > this.array[h][i][j].x) {
-                                player.stats.x = this.array[h][i][j].x + this.array[h][i][j].width;
-                                player.left = false;
-                                player.stats.noleft = true;
-                            }
-                            if (player.stats.x < this.array[h][i][j].x) {
-                                player.stats.x = this.array[h][i][j].x - player.stats.width;
-                                player.right = false;
-                                player.stats.noright = true;
-                            }
-                            player.stats.currentCollision = [h, i, j];
-
-                        }
                     }
-
-                    if (!isNaN(player.stats.currentCollision[0]) && player.jump) {
-                        
-                        if (!player.collide(this.array[player.stats.currentCollision[0]][player.stats.currentCollision[1]][player.stats.currentCollision[2]])) {
-                            player.stats.noleft = false;
-                            player.stats.noright = false;
-                            player.stats.currentCollision = ["none", "none", "none"];
-                        }
+                    else if (player.stats.y + player.stats.height < rocktop && rocktop - (player.stats.y + player.stats.height) < 6 / 5 * player.amount.y) {
+                        player.stats.y = this.array[h][i][j].y + this.array[h][i][j].height;
+                        player.gravitySpeed *= 1.5;
                     }
+                    else {
+                        player.gravitySpeed = 0;
+                        if (player.stats.x > this.array[h][i][j].x) {
+                            player.stats.x = this.array[h][i][j].x + this.array[h][i][j].width;
+                            player.left = false;
+                            player.stats.noleft = true;
+                        }
+                        if (player.stats.x < this.array[h][i][j].x) {
+                            player.stats.x = this.array[h][i][j].x - player.stats.width;
+                            player.right = false;
+                            player.stats.noright = true;
+                        }
+                        player.stats.currentCollision = [h, i, j];
 
-                    this.array[h][i][j].draw();
-
-
+                    }
                 }
-            
+
+                if (!isNaN(player.stats.currentCollision[0]) && player.jump) {
+
+                    if (!player.collide(this.array[player.stats.currentCollision[0]][player.stats.currentCollision[1]][player.stats.currentCollision[2]])) {
+                        player.stats.noleft = false;
+                        player.stats.noright = false;
+                        player.stats.currentCollision = ["none", "none", "none"];
+                    }
+                }
+
+                this.array[h][i][j].draw();
+
+
+            }
+
         }
     }
     draw() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
+        if (player.health == 0) {
+            player.die();
+            return;
+
+        }
         ctx.drawImage(heart, canvas.width - 225, 10, 40, 40)
         coin.draw();
         ctx.beginPath();
-        var text = game.coins; 
+        var text = game.coins;
         ctx.fillStyle = "gold";
-        ctx.font = "30px Impact";    
-        ctx.fillText( text, canvas.width - 75 , 45 );
+        ctx.font = "30px Impact";
+        ctx.fillText(text, canvas.width - 75, 45);
         ctx.fillStyle = "red";
-        ctx.fillText( player.health, canvas.width - 250 , 45 );
+        ctx.fillText(player.health, canvas.width - 250, 45);
         ctx.closePath();
         if (player.right && !player.stats.noright && player.stats.x + player.stats.width + player.amount.x < canvas.width) {
             player.stats.x += player.amount.x;
@@ -354,22 +367,22 @@ class Game
             currentSprite = "ninSprite";
             player.stats.spriteRow = 0;
 
-            
+
 
 
         }
 
-        if(player.throw ){
+        if (player.throw) {
             player.throw = false;
-            var kind = player.right? {type: "nr", direction: "positive"}:
-             player.left ? {type: "nl", direction: "negative"}
-              : {type:"nr", direction: "positive"};
-              var startingpoint = player.stats.x +( kind.type == "nr" ? 100: kind.type == "nl" ? -100: 100);
+            var kind = player.right ? { type: "nr", direction: "positive" } :
+                player.left ? { type: "nl", direction: "negative" }
+                    : { type: "nr", direction: "positive" };
+            var startingpoint = player.stats.x + (kind.type == "nr" ? 100 : kind.type == "nl" ? -100 : 100);
 
-              if(player.stats.stars.length == 0 || player.stats.stars[player.stats.stars.length - 1].x - startingpoint > 200 )
-            player.stats.stars.push(new Component( startingpoint, 
-            player.stats.y + player.stats.height/4, 50, 25, kind.type, kind.direction )); 
-            
+            if (player.stats.stars.length == 0 || player.stats.stars[player.stats.stars.length - 1].x - startingpoint > 100)
+                player.stats.stars.push(new Component(startingpoint,
+                    player.stats.y + player.stats.height / 4, 50, 25, kind.type, kind.direction));
+
         }
         if (player.jump) {
             player.stats.y -= player.amount.y;
@@ -382,11 +395,11 @@ class Game
         player.gravitySpeed += player.gravity;
         player.draw();
 
- 
 
- 
 
-   
+
+
+
     }
 }
 
@@ -406,7 +419,7 @@ class Player {
             spriteRow: 0,
             spriteCol: 0,
             stars: []
-            }
+        }
         this._health = 3;
         this._throw = false;
         this._right = false;
@@ -418,16 +431,16 @@ class Player {
         this.gravity = 0.06;
         this._gravitySpeed = 0;
     }
-    get health(){
+    get health() {
         return this._health;
     }
-    set health(value){
+    set health(value) {
         this._health = value;
     }
-    get throw(){
+    get throw() {
         return this._throw;
     }
-    set throw(value){
+    set throw(value) {
         this._throw = value;
     }
     get speedY() {
@@ -460,39 +473,57 @@ class Player {
     set left(value) {
         this._left = value;
     }
+    die() {
+        clearInterval(mainTime);
+        clearInterval(ninjastars);
+        ctx.beginPath();
+        ctx.fillStyle = "red";
+        ctx.font = "60px Impact";
+        ctx.fillText("Game Over", canvas.width / 2 - 100, canvas.height / 2 - 100);
+        ctx.fillStyle = "green";
+        ctx.font = "30px Arial";
+        if (time / 1000 > Number(localStorage.highScore)) {
+            ctx.fillText("You survived for " + time / 1000 + " seconds! Beating your old highscore( " + Number(localStorage.highScore) + "s ) by " + Math.abs(Number(localStorage.highScore) - time / 1000) + " seconds!", canvas.width / 6, canvas.height / 2);
+        }
+        ctx.fillStyle = "yellow";
+        ctx.fillText("And collected " + game.coins + " coins", canvas.width / 4, canvas.height / 2 + 50);
+
+        console.log("draw");
+        ctx.closePath();
+    }
     draw() {
 
         ctx.beginPath();
-        if(currentSprite == "ninMain"){
-        ctx.drawImage(ninMain,
-            this.stats.x,
-            this.stats.y,
-            this.stats.width, this.stats.height); 
+        if (currentSprite == "ninMain") {
+            ctx.drawImage(ninMain,
+                this.stats.x,
+                this.stats.y,
+                this.stats.width, this.stats.height);
         }
-        if(currentSprite == "ninSprite"){
+        if (currentSprite == "ninSprite") {
             currentSprite = "ninSprite";
 
-            if(!player.jump && !player.throw)
-            player.stats.spriteCol = player.stats.spriteCol < 3 ?  player.stats.spriteCol + 1: 0 ;
-            if((player.jump) && player.left) player.stats.spriteCol = 0;
-            if((player.jump) && player.right) player.stats.spriteCol = 2;
-        
-           if((player.amount.y - player.gravitySpeed) < 0 && player.left){
-            currentSprite = "ninSprite";
-               player.stats.spriteRow = 2;
-               player.stats.spriteCol = 1;
-           }
-           if((player.amount.y - player.gravitySpeed) < 0 && player.right){
-            currentSprite = "ninSprite";
-               player.stats.spriteRow = 2;
-               player.stats.spriteCol = 3;
-           }
-            if(this.stats.shoot && this.right){
+            if (!player.jump && !player.throw)
+                player.stats.spriteCol = player.stats.spriteCol < 3 ? player.stats.spriteCol + 1 : 0;
+            if ((player.jump) && player.left) player.stats.spriteCol = 0;
+            if ((player.jump) && player.right) player.stats.spriteCol = 2;
+
+            if ((player.amount.y - player.gravitySpeed) < 0 && player.left) {
+                currentSprite = "ninSprite";
+                player.stats.spriteRow = 2;
+                player.stats.spriteCol = 1;
+            }
+            if ((player.amount.y - player.gravitySpeed) < 0 && player.right) {
+                currentSprite = "ninSprite";
+                player.stats.spriteRow = 2;
+                player.stats.spriteCol = 3;
+            }
+            if (this.stats.shoot && this.right) {
                 currentSprite = "ninSprite";
                 this.stats.spriteCol = 3;
                 this.stats.spriteRow = 3;
             }
-            if(this.stats.shoot && this.left){
+            if (this.stats.shoot && this.left) {
                 currentSprite = "ninSprite";
 
                 this.stats.spriteCol = 2;
@@ -500,21 +531,21 @@ class Player {
             }
             var sprite = whichSprite();
             ctx.drawImage(sprite,
-                this.stats.spriteCol * (sprite.width/ 4) + (sprite.width/16) ,
-                this.stats.spriteRow * (sprite.height/5) + (sprite.width/16),
-                (1/2) * (sprite.width/ 4),
-                (1/2) * (sprite.height/5),
+                this.stats.spriteCol * (sprite.width / 4) + (sprite.width / 16),
+                this.stats.spriteRow * (sprite.height / 5) + (sprite.width / 16),
+                (1 / 2) * (sprite.width / 4),
+                (1 / 2) * (sprite.height / 5),
                 this.stats.x,
                 this.stats.y,
-                this.stats.width, 
-                this.stats.height); 
-                
+                this.stats.width,
+                this.stats.height);
 
 
 
-        
-        }       
-        
+
+
+        }
+
         ctx.closePath();
     }
     collide(value) {
@@ -540,7 +571,7 @@ class Player {
 
 
         }
-        if(event.key == " "){
+        if (event.key == " ") {
             this.throw = true;
             this.stats.shoot = true;
         }
@@ -549,13 +580,12 @@ class Player {
             currentSprite = "ninMain";
             this.jump = true;
 
-            
+
         }
-        
+
 
     }
-    moveReset(event)
-    {
+    moveReset(event) {
         currentSprite = "ninMain";
         if (event.key === "ArrowRight" || event.key == "d" || event.key == "D") {
             this.right = false;
@@ -565,7 +595,7 @@ class Player {
             this.left = false;
 
         }
-        if(event.key === " "){
+        if (event.key === " ") {
             this.stats.shoot = false;
         }
 
@@ -575,7 +605,7 @@ class Player {
     }
 }
 const game = new Game();
-const player = new Player(100, 150, canvas.width/25,  canvas.height/10, "yellow");
+const player = new Player(100, 150, canvas.width / 25, canvas.height / 10, "yellow");
 const coin = new Component(canvas.width - 150, 0, 40, 60, "c");
 
 // The sprite image frame starts from 0
@@ -613,46 +643,46 @@ setInterval(function()
 
 //Wait for next step in the loop
 }, 100);*/
-function start(){
+function start() {
     mainMusic.play();
     document.getElementsByClassName("bg-text")[0].style.display = "none";
     document.addEventListener("keydown", function () {
 
-    player.movement(event);
-    
-});
-document.addEventListener("keyup", function () {
+        player.movement(event);
 
-    player.moveReset(event);
-  
-});
+    });
+    document.addEventListener("keyup", function () {
+
+        player.moveReset(event);
+
+    });
 
 
-setInterval(function () {
-    game.draw();
-}, 10);
-setInterval(function(){
-    if(player.stats.stars.length != 0){
-        
-    for(var i = 0; i < player.stats.stars.length; i++){
-        player.stats.stars[i].draw();
-        for (let j = 0; j < game.array[game.current.level].length; j++) {
-            
-            for (let k = 0; k < game.array[game.current.level][j].length; k++) {
-                if(player.stats.stars.length == 0){
-                    return;
-                }
-                if(player.stats.stars[i].collide(game.array[game.current.level][j][k]) && game.array[game.current.level][j][k].type != 0){
-                    if(game.array[game.current.level][j][k].type == "m"){
-                        game.array[game.current.level][j][k] = 0;
+    mainTime = setInterval(function () {
+        game.draw();
+    }, 10);
+    ninjastars = setInterval(function () {
+        if (player.stats.stars.length != 0) {
+
+            for (var i = 0; i < player.stats.stars.length; i++) {
+                player.stats.stars[i].draw();
+                for (let j = 0; j < game.array[game.current.level].length; j++) {
+
+                    for (let k = 0; k < game.array[game.current.level][j].length; k++) {
+                        if (player.stats.stars.length == 0) {
+                            return;
+                        }
+                        if (player.stats.stars[i].collide(game.array[game.current.level][j][k]) && game.array[game.current.level][j][k].type != 0) {
+                            if (game.array[game.current.level][j][k].type == "m") {
+                                game.array[game.current.level][j][k] = 0;
+                            }
+                            player.stats.stars.splice(i, 1);
+                        }
                     }
-                    player.stats.stars.splice(i, 1);
                 }
+                player.stats.stars[i].x += player.stats.stars[i].move == "positive" ? 5 : player.stats.stars[i].move == "negative" ? -5 : 5;
+                if (player.stats.stars[i].x > canvas.width || player.stats.stars[i].x < 0) player.stats.stars.shift();
             }
         }
-        player.stats.stars[i].x += player.stats.stars[i].move == "positive" ? 5 : player.stats.stars[i].move == "negative" ? -5: 5 ;
-        if(player.stats.stars[i].x > canvas.width || player.stats.stars[i].x < 0) player.stats.stars.shift();
-    }
-}
-}, 10);
+    }, 10);
 }
