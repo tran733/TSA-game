@@ -10,6 +10,7 @@ const deviceType = () => {
 }
 var mainTime;
 var ninjastars;
+var monsters;
 localStorage.highScore = localStorage.highScore ? localStorage.highScore : 0;
 const canvas = document.getElementById("myCanvas");
 const ctx = canvas.getContext("2d");
@@ -25,6 +26,14 @@ const ninMain = new Image();
 ninMain.src = 'Nin-Main.png';
 const ninSprite = new Image();
 ninSprite.src = "Nin-Sprite.png";
+const ninjaLeft = new Image();
+ninjaLeft.src = "starleft.png";
+const ninjaRight = new Image();
+ninjaRight.src = "starright.png";
+const slimeballLeft = new Image();
+slimeballLeft.src = "slimeball-left.png";
+const slimeballRight = new Image();
+slimeballRight.src = "slimeball-right.png";
 var currentSprite = "ninMain";
 var time = 0;
 function whichSprite() {
@@ -94,6 +103,8 @@ class Component {
             "t": "platform.png",
             "nl": "starleft.png",
             "nr": "starright.png",
+            "sl": "slimeball-left.png",
+            "sr": "slimeball-right.png",
             "m": Math.sign(moveAmount) == "-1" ? "slimeleft.png" : "slimeright.png"
         }
         this.images = {
@@ -101,7 +112,9 @@ class Component {
             "t": { image: 1 },
             "m": { image: 1 },
             "nl": { row: 1, cols: 1, multiplierX1: 0, multiplierX2: 0, width: 40, height: 20, multiplierY1: 0, multiplierY2: 0 },
-            "nr": { row: 1, cols: 1, multiplierX1: 0, multiplierX2: 0, width: 40, height: 20, multiplierY1: 0, multiplierY2: 0 }
+            "nr": { row: 1, cols: 1, multiplierX1: 0, multiplierX2: 0, width: 40, height: 20, multiplierY1: 0, multiplierY2: 0 },
+            "sl": { row: 1, cols: 1, multiplierX1: 0, multiplierX2: 0, width: 40, height: 40, multiplierY1: 0, multiplierY2: 0 },
+            "sr": { row: 1, cols: 1, multiplierX1: 0, multiplierX2: 0, width: 40, height: 40, multiplierY1: 0, multiplierY2: 0 }
 
 
         }
@@ -117,8 +130,13 @@ class Component {
         this.color = this.types[`${this.type}`];
         this.frame = 0;
         if (this.types[`${this.type}`].indexOf(".") > -1) {
-            this.image = new Image();
-            this.image.src = this.types[`${this.type}`];
+            if(this.type == "nl" || this.type == "nr" || this.type == "sl" || this.type == "sr"){
+               this.image = this.type == "nl" ? ninjaLeft : this.type == "nr" ? ninjaRight: this.type == "sl"? slimeballLeft : slimeballRight;  
+            }
+            else{
+                this.image = new Image();
+                this.image.src = this.types[`${this.type}`];
+            }
         }
         this.time = 0;
     }
@@ -217,6 +235,9 @@ class Game {
         var P = "P";
         var c = "c";
         var t = "t";
+        this.objects = {
+            thrown: []
+        }
         this.current =
         {
             level: 0
@@ -225,16 +246,18 @@ class Game {
 
             [
                 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, "m:1:100:60", 0, P, P, 0],
-                [0, 0, 0, 0, 0, c, c, P, P, 0],
-                [0, 0, 0, 0, 0, g, g, g, 0, 0],
-                [0, g, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, P, P, 0, 0, 0, 0],
+                [0, 0, 0, 0, g, g, 0, 0, "m:1:100:50", 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, g, 0],
+                [0, 0, g, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, "m:2:50:50", 0, 0, 0, 0, 0],
+                [0, 0, 0, g, g, g, g, 0, 0, 0],
                 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, "m:0.25:100:60", 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, t, 0, t, 0, t, 0, 0, "m:-2:70:50"],
-                [t, t, g, t, g, t, g, t, t, t],
+                [t, t, t, t, t, t, t, t, t, t],
                 [g, g, g, g, g, g, g, g, g, g]
+                
             ]
+                
             ,
             [
                 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -249,9 +272,12 @@ class Game {
                 [g, g, g, g, p, g, g, g, g, g]
             ]
         ];
+
         this.avgTileWidth = canvas.width / this.array[0][0].length;
         this.avgTileHeight= canvas.height / this.array[0].length;
-
+        this.monster = {
+            slimeballs: []
+        }
         this.coins = 0;
     }
 
@@ -277,6 +303,18 @@ class Game {
                 if (player.collide(this.array[h][i][j]) && this.array[h][i][j].type == "m") {
                     this.array[h][i][j] = 0;
                     player.health -= 1;
+                }
+                if(Math.abs(player.stats.x - this.array[h][i][j].x)  < 300 && Math.abs(player.stats.y - this.array[h][i][j].y) < 100 && this.array[h][i][j].type == "m" && game.objects.thrown.length < 2){
+                    var left = Math.sign(player.stats.x - this.array[h][i][j].x) == "-1";
+                    var right =  Math.sign(player.stats.x - this.array[h][i][j].x) == "1";
+                    var kind = right ? { type: "sr", direction: "positive" } :
+                    left ? { type: "sl", direction: "negative" }
+                        : { type: "sr", direction: "positive" };
+                var startingpoint = this.array[h][i][j].x + (kind.type == "sr" ? 100 : kind.type == "sl" ? -100 : 100);
+    
+                if (game.objects.thrown.length == 0 || game.objects.thrown[game.objects.thrown.length - 1].x - startingpoint > 100)
+                game.objects.thrown.push(new Component(startingpoint,
+                    this.array[h][i][j].y +  this.array[h][i][j].height / 4, 50, 25, kind.type, kind.direction));
                 }
                 if (player.collide(this.array[h][i][j]) && this.array[h][i][j].type == "c") {
                     this.array[h][i][j] = new Component(((canvas.width / this.array[h].length) * j),
@@ -379,8 +417,8 @@ class Game {
                     : { type: "nr", direction: "positive" };
             var startingpoint = player.stats.x + (kind.type == "nr" ? 100 : kind.type == "nl" ? -100 : 100);
 
-            if (player.stats.stars.length == 0 || player.stats.stars[player.stats.stars.length - 1].x - startingpoint > 100)
-                player.stats.stars.push(new Component(startingpoint,
+            if (game.objects.thrown.length == 0 || game.objects.thrown[game.objects.thrown.length - 1].x - startingpoint > 100)
+                game.objects.thrown.push(new Component(startingpoint,
                     player.stats.y + player.stats.height / 4, 50, 25, kind.type, kind.direction));
 
         }
@@ -483,7 +521,12 @@ class Player {
         ctx.fillStyle = "green";
         ctx.font = "30px Arial";
         if (time / 1000 > Number(localStorage.highScore)) {
-            ctx.fillText("You survived for " + time / 1000 + " seconds! Beating your old highscore( " + Number(localStorage.highScore) + "s ) by " + Math.abs(Number(localStorage.highScore) - time / 1000) + " seconds!", canvas.width / 6, canvas.height / 2);
+            ctx.fillText("You survived for " + time / 1000 + " seconds! Beating your old highscore( " + Number(localStorage.highScore) + "s ) by " +Math.abs(Number(localStorage.highScore) - time / 1000).toFixed(2) + " seconds!", canvas.width / 6, canvas.height / 2);
+            localStorage.highScore = time/1000;
+        }
+        if(time/ 1000 <  Number(localStorage.highScore)){
+            ctx.fillText("You survived for " + time / 1000 + " seconds! Less than your old highscore( " + Number(localStorage.highScore) + "s ) by " + Math.abs(Number(localStorage.highScore) - time / 1000).toFixed(2) + " seconds...", canvas.width / 6, canvas.height / 2);
+
         }
         ctx.fillStyle = "yellow";
         ctx.fillText("And collected " + game.coins + " coins", canvas.width / 4, canvas.height / 2 + 50);
@@ -662,26 +705,26 @@ function start() {
         game.draw();
     }, 10);
     ninjastars = setInterval(function () {
-        if (player.stats.stars.length != 0) {
+        if (game.objects.thrown.length != 0) {
 
-            for (var i = 0; i < player.stats.stars.length; i++) {
-                player.stats.stars[i].draw();
+            for (var i = 0; i < game.objects.thrown.length; i++) {
+                game.objects.thrown[i].draw();
                 for (let j = 0; j < game.array[game.current.level].length; j++) {
 
                     for (let k = 0; k < game.array[game.current.level][j].length; k++) {
-                        if (player.stats.stars.length == 0) {
+                        if (game.objects.thrown.length == 0) {
                             return;
                         }
-                        if (player.stats.stars[i].collide(game.array[game.current.level][j][k]) && game.array[game.current.level][j][k].type != 0) {
-                            if (game.array[game.current.level][j][k].type == "m") {
+                        if (game.objects.thrown[i].collide(game.array[game.current.level][j][k]) && game.array[game.current.level][j][k].type != 0) {
+                            if (game.array[game.current.level][j][k].type == "m" &&  game.objects.thrown[i].type.indexOf("n") > -1 ) {
                                 game.array[game.current.level][j][k] = 0;
                             }
-                            player.stats.stars.splice(i, 1);
+                            game.objects.thrown.splice(i, 1);
                         }
                     }
                 }
-                player.stats.stars[i].x += player.stats.stars[i].move == "positive" ? 5 : player.stats.stars[i].move == "negative" ? -5 : 5;
-                if (player.stats.stars[i].x > canvas.width || player.stats.stars[i].x < 0) player.stats.stars.shift();
+                game.objects.thrown[i].x += game.objects.thrown[i].move == "positive" ? 5 : game.objects.thrown[i].move == "negative" ? -5 : 5;
+                if (game.objects.thrown[i].x > canvas.width || game.objects.thrown[i].x < 0) game.objects.thrown.shift();
             }
         }
     }, 10);
