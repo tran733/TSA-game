@@ -95,7 +95,7 @@ class Component {
             this.y += game.avgTileHeight - this.height;
         }
         this.types = {
-            g: "green",
+            g: "#471303",
             "0": "none",
             p: "pink",
             "P": "purple",
@@ -677,7 +677,41 @@ class Player {
 const game = new Game();
 const player = new Player(100, 150, canvas.width / 25, canvas.height / 10, "yellow");
 const coin = new Component(canvas.width - 150, 0, 40, 60, "c");
+function createLevels(){
+    var main = [];
+    var allComponents = ["g", "g", "g", "t", "t", '0', '0', '0', '0', '0', "p" ];
+    for(var i = 0 ; i < 100; i++){
+        var currentArray = [];
+        var portal = Math.round((Math.random() * 4) + 2) + ":" + Math.round(Math.random() * 7);
+        var platforms = Math.round(Math.random() * (Math.round(Math.random() * 4)));
+        for(var j = 0 ; j < 10; j++){
+            var currentRow = [];
+            for(var k = 0; k < 10; k++){
+                if(j == portal.split(":")[0] && k == portal.split(":")[1]){
+                    currentRow.push("P");
+                    continue;
+                }
+                if(j != 0 && j > 5){
+                    if(currentArray[j - 1][k] == "t" || currentArray[j - 1][k] == "g" ){
+                        currentRow.push("g");
+                        continue;
+                    }
+                }
+                if(j > 5){
+                    currentRow.push(["t", "0"][Math.round(Math.random() * 1)]);
+                }
+                else {
+                    currentRow.push(["t", "0", "0", "0", "0", "0", "0", "0", "0", "0"][Math.round(Math.random() * 9)]);
+                }
 
+
+            }
+            currentArray.push(currentRow);
+        }
+        game.array.push(currentArray);
+    }
+}
+createLevels();
 // The sprite image frame starts from 0
 /*
 let currentFrame = 0;
