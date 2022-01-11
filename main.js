@@ -76,8 +76,8 @@ if (localStorage.device == ("mobile" || "tablet")) {
         player.left = false;
     });
 }
-canvas.width = window.innerWidth * 98 / 100;
-canvas.height = window.innerHeight * 95 / 100;
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
 if (localStorage != ("mobile" || "tablet")) {
     background.style.width = canvas.width + "px";
     background.style.height = canvas.height + "px";
@@ -294,6 +294,18 @@ class Game {
                 [t, c, 0, 0, g, g, 0, 0, c, t],
                 [t, t, 0, 0, 0, 0, 0, 0, t, t],
                 [g, g, g, g, g, g, g, g, g, g]
+            ],
+            [
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, "m:2:75:50", c, 0, 0, 0, g, g, 0],
+                [0, g, g, g, 0, 0, 0, 0, c, 0],
+                [0, 0, 0, 0, 0, 0, g, 0, g, g],
+                [g, g, 0, c, "m:2:50:50", 0, 0, g, 0, 0],
+                [0, 0, 0, g, g, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, t, 0, P, P, 0, 0, t, 0, 0],
+                [t, g, t, t, t, t, t, t, g, t]
             ]
 
 
@@ -326,6 +338,11 @@ class Game {
                 }
                 if (player.collide(this.array[h][i][j]) && this.array[h][i][j].type == "P") {
                     this.current.level += this.current.level < this.array.length ? 1 : 0;
+                    var portal = String(Number(this.array[this.current.level].join(" ").indexOf("P"))/10).split(".")[1];
+                    player.stats.x =  (portal > 5 ? 9: 0) * game.avgTileWidth ;
+                    player.stats.y = 0;
+                    console.log(player.stats.x);
+
                 }
                 if (player.collide(this.array[h][i][j]) && this.array[h][i][j].type == "m") {
                     this.array[h][i][j] = 0;
@@ -402,6 +419,9 @@ class Game {
     }
     draw() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
+        if(player.stats.y > canvas.height){
+            player.health = 0;
+        }
         if (player.health == 0) {
             player.die();
             return;
@@ -414,6 +434,7 @@ class Game {
         ctx.fillStyle = "gold";
         ctx.font = "30px Impact";
         ctx.fillText(text, canvas.width - 75, 45);
+        ctx.fillText("Level: " + Math.round(game.current.level + 1), 50, 45);
         ctx.fillStyle = "red";
         ctx.fillText(player.health, canvas.width - 250, 45);
         ctx.closePath();
@@ -444,7 +465,7 @@ class Game {
                     : { type: "nr", direction: "positive" };
             var startingpoint = player.stats.x + (kind.type == "nr" ? 100 : kind.type == "nl" ? -100 : 100);
 
-            if (game.objects.thrown.length == 0 || game.objects.thrown[game.objects.thrown.length - 1].x - startingpoint > 100)
+            if (game.objects.thrown.length < 10 || game.objects.thrown[game.objects.thrown.length - 1].x - startingpoint > 100)
                 game.objects.thrown.push(new Component(startingpoint,
                     player.stats.y + player.stats.height / 4, 50, 25, kind.type, kind.direction));
 
@@ -493,7 +514,7 @@ class Player {
         this.color = color;
         this._speedY = 0;
         this.amount = { x: 3, y: 4 }
-        this.gravity = 0.06;
+        this.gravity = 0.05;
         this._gravitySpeed = 0;
     }
     get health() {
@@ -677,27 +698,24 @@ class Player {
 const game = new Game();
 const player = new Player(100, 150, canvas.width / 25, canvas.height / 10, "yellow");
 const coin = new Component(canvas.width - 150, 0, 40, 60, "c");
-function createLevels(){
-    var main = [];
-    var allComponents = ["g", "g", "g", "t", "t", '0', '0', '0', '0', '0', "p" ];
-    for(var i = 0 ; i < 100; i++){
+function createLevels() {
+    for (var i = 0; i < 100; i++) {
         var currentArray = [];
         var portal = Math.round((Math.random() * 4) + 2) + ":" + Math.round(Math.random() * 7);
-        var platforms = Math.round(Math.random() * (Math.round(Math.random() * 4)));
-        for(var j = 0 ; j < 10; j++){
+        for (var j = 0; j < 10; j++) {
             var currentRow = [];
-            for(var k = 0; k < 10; k++){
-                if(j == portal.split(":")[0] && k == portal.split(":")[1]){
+            for (var k = 0; k < 10; k++) {
+                if (j == portal.split(":")[0] && k == portal.split(":")[1]) {
                     currentRow.push("P");
                     continue;
                 }
-                if(j != 0 && j > 5){
-                    if(currentArray[j - 1][k] == "t" || currentArray[j - 1][k] == "g" ){
+                if (j != 0 && j > 5) {
+                    if (currentArray[j - 1][k] == "t" || currentArray[j - 1][k] == "g") {
                         currentRow.push("g");
                         continue;
                     }
                 }
-                if(j > 5){
+                if (j > 5) {
                     currentRow.push(["t", "0"][Math.round(Math.random() * 1)]);
                 }
                 else {
@@ -769,6 +787,15 @@ function start() {
         if (game.objects.thrown.length != 0) {
 
             for (var i = 0; i < game.objects.thrown.length; i++) {
+                if (player.collide(game.objects.thrown[i]) &&   game.objects.thrown.length != 0) {
+                    game.objects.thrown.splice(i, 1);
+                    player.health -= 1;
+
+                }
+                if (game.objects.thrown[i].x > canvas.width || game.objects.thrown[i].x < 0) game.objects.thrown.shift();
+
+                game.objects.thrown[i].x += game.objects.thrown[i].move == "positive" ? 5 : game.objects.thrown[i].move == "negative" ? -5 : 5;
+             
                 game.objects.thrown[i].draw();
                 for (let j = 0; j < game.array[game.current.level].length; j++) {
 
@@ -784,12 +811,8 @@ function start() {
                         }
                     }
                 }
-                if (game.objects.thrown[i].collide(player)) {
-                    game.objects.thrown.splice(i, 1);
-                    player.health -= 1;
-                }
-                game.objects.thrown[i].x += game.objects.thrown[i].move == "positive" ? 5 : game.objects.thrown[i].move == "negative" ? -5 : 5;
-                if (game.objects.thrown[i].x > canvas.width || game.objects.thrown[i].x < 0) game.objects.thrown.shift();
+
+  
             }
         }
     }, 10);
