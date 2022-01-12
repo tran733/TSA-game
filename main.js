@@ -348,7 +348,7 @@ class Game {
                     this.array[h][i][j] = 0;
                     player.health -= 1;
                 }
-                if (Math.abs(player.stats.x - this.array[h][i][j].x) < 300 && Math.abs(player.stats.y - this.array[h][i][j].y) < 100 && this.array[h][i][j].type == "m" && game.objects.thrown.length < 2) {
+                if (Math.abs(player.stats.x - this.array[h][i][j].x) < 300 && Math.abs(player.stats.y - this.array[h][i][j].y) < 100 && this.array[h][i][j].type == "m" && game.objects.thrown.length < 2 && String(time/1000).indexOf(".") == -1) {
                     var left = Math.sign(player.stats.x - this.array[h][i][j].x) == "-1";
                     var right = Math.sign(player.stats.x - this.array[h][i][j].x) == "1";
                     var kind = right ? { type: "sr", direction: "positive" } :
@@ -514,7 +514,7 @@ class Player {
         this.color = color;
         this._speedY = 0;
         this.amount = { x: 3, y: 4 }
-        this.gravity = 0.05;
+        this.gravity = 0.045;
         this._gravitySpeed = 0;
     }
     get health() {
@@ -709,17 +709,25 @@ function createLevels() {
                     currentRow.push("P");
                     continue;
                 }
-                if (j != 0 && j > 5) {
-                    if (currentArray[j - 1][k] == "t" || currentArray[j - 1][k] == "g") {
+
+
+                if (j != 0) {
+                    if ((currentArray[j - 1][k] == "t" || currentArray[j - 1][k] == "g") && j > 5) {
                         currentRow.push("g");
                         continue;
                     }
+
+                    if(currentArray[j - 1][k] == "c" && j < 5){
+                        currentRow.push("t");
+                        continue;
+                    }
+     
                 }
                 if (j > 5) {
                     currentRow.push(["t", "0"][Math.round(Math.random() * 1)]);
                 }
                 else {
-                    currentRow.push(["t", "0", "0", "0", "0", "0", "0", "0", "0", "0"][Math.round(Math.random() * 9)]);
+                    currentRow.push(["c", "0", "0", "0", "0", "0", "0", "0", "0", "0"][Math.round(Math.random() * 9)]);
                 }
 
 
@@ -787,12 +795,19 @@ function start() {
         if (game.objects.thrown.length != 0) {
 
             for (var i = 0; i < game.objects.thrown.length; i++) {
+  
                 if (player.collide(game.objects.thrown[i]) &&   game.objects.thrown.length != 0) {
                     game.objects.thrown.splice(i, 1);
                     player.health -= 1;
+                    continue;
 
                 }
-                if (game.objects.thrown[i].x > canvas.width || game.objects.thrown[i].x < 0) game.objects.thrown.shift();
+                console.log(game.objects.thrown.length)
+                if (game.objects.thrown[i].x > canvas.width || game.objects.thrown[i].x < 0)
+                {
+                    game.objects.thrown.shift();
+                    continue;
+                } 
 
                 game.objects.thrown[i].x += game.objects.thrown[i].move == "positive" ? 5 : game.objects.thrown[i].move == "negative" ? -5 : 5;
              
