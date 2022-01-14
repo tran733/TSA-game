@@ -1,30 +1,53 @@
 <!DOCTYPE html>
 
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+
 <head>
     <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
 
-<meta name="viewport" content="width=device-width,
+    <meta name="viewport" content="width=device-width,
     user-scalable=no, initial-scale=1, maximum-scale=1, user-scalable=0" />
-<meta name="apple-mobile-web-app-capable" content="yes" />
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <title>Ninja Platformer</title>
     <link rel="icon" type="image/png" href="favicon.png" />
     <style>
+        @font-face {
+            font-family: 'pixel';
+            src: url('VT323-Regular.ttf');
+        }
+
+        .black {
+            background-color: black;
+            color: white;
+            font-family: pixel;
+            border: 4px solid black;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 3;
+            width: 50%;
+            font-size: 150%;
+        }
+
         body {
-            margin: 0; 
+            margin: 0;
             padding: 0;
             background: #000;
-            }
+        }
 
         canvas {
-          margin: 0px;
-          background-color: transparent;
-          position: absolute;
+            margin: 0px;
+            background-color: transparent;
+            position: absolute;
         }
-        #gameBtns{
-            display:none;
+
+        #gameBtns {
+            display: none;
         }
+
         button {
             color: red;
             font-size: 200%;
@@ -33,25 +56,32 @@
             background-color: white;
 
         }
-        #right{
+
+        #right {
             right: 5%;
             bottom: 20%;
 
         }
-        #left{
+
+        #left {
             right: 30%;
             bottom: 20%;
         }
-        #jump{
+
+        #jump {
             right: 10%;
             bottom: 30%;
         }
+
         .bg-text {
-            background-color: rgb(0,0,0); /* Fallback color */
-            background-color: rgba(0,0,0, 0.4); /* Black w/opacity/see-through */
+            background-color: rgb(0, 0, 0);
+            /* Fallback color */
+            background-color: rgba(0, 0, 0, 0.4);
+            /* Black w/opacity/see-through */
             color: white;
             font-weight: bold;
-            font-size: 80px;
+            font-family: 'pixel';
+            font-size: 120px;
             border: 10px solid #f1f1f1;
             position: fixed;
             top: 50%;
@@ -61,31 +91,72 @@
             width: 325px;
             padding: 20px;
             text-align: center;
-            }
+            display: none;
+        }
     </style>
     <noscript>
         Seriously? Please turn on Javascript.
         The game depends on it.
     </noscript>
 </head>
-<body>
-    <button class="bg-text" onclick = "start()">START</button>
 
-    <audio id = "mainMusic" loop = "loop">
-        <source src = "mainMusic.mp3" type ="audio/mp3" ></source>
+<body>
+
+    <div class="black">
+        <span id = "loading" style = "font-size: 30px;">Loading</span>
+        <div id="myBar" class="w3-white" style="height:36px;width:0%; font-family: pixel; padding-left: 5px;">0</div>
+    </div>
+    <button class="bg-text" onclick="start()">START</button>
+
+    <audio id="mainMusic" loop="loop">
+        <source src="mainMusic.mp3" type="audio/mp3">
+        </source>
     </audio>
 
-    <image src ="cloudsAnimated.gif" id="clouds" style="position: absolute;"></image>
+    <image src="cloudsAnimated.gif" id="clouds" style="position: absolute; display: none;"></image>
     <canvas id="myCanvas"></canvas>
-    <div id = "gameBtns">
-        <button id = "jump">Jump</button>
-        <button id = "left">Left</button>
-        <button id = "right">Right</button>
+    <div id="gameBtns">
+        <button id="jump">Jump</button>
+        <button id="left">Left</button>
+        <button id="right">Right</button>
 
-        
+
 
     </div>
-    <script src = "main.js"></script>
+    <script src="main.js"></script>
+    <script>
+        localStorage.playedBefore = localStorage.playedBefore == 'true' ? localStorage.playedBefore : 'false';
+        function move() {
+            var elem = document.getElementById("myBar");
+            var width = 0;
+            var id = setInterval(frame, 50);
+            var loading = document.getElementById("loading");
+            function frame() {
+                if (width >= 100) {
+                    localStorage.playedBefore = 'true';
+                    clearInterval(id);
+                    document.getElementById("clouds").style.display = "block";
+                    document.getElementsByClassName("bg-text")[0].style.display = "block";
+                    document.getElementsByClassName("black")[0].style.display = 'none';
 
+                } else {
+                    width += localStorage.playedBefore == "false" ? 0.1 : 1;
+                    elem.style.width = width + '%';
+                    elem.innerHTML = (width * 1).toFixed(localStorage.playedBefore == "false" ? 1 : 0) + '%';
+                    if(loading.innerText.lastIndexOf(".") - loading.innerText.indexOf(".") < 3 && String((width * 1).toFixed(localStorage.playedBefore == "false" ? 1 : 0)).indexOf(".") == -1){
+                        loading.innerText+=".";
+                    }
+                    else {
+                        loading.innerText = "loading";
+                    }
+
+                }
+            }
+
+        }
+        move();
+
+    </script>
 </body>
+
 </html>
