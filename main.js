@@ -6,6 +6,16 @@ const deviceType = () => {
     else if (/Mobile|Android|iP(hone|od)|IEMobile|BlackBerry|Kindle|Silk-Accelerated|(hpw|web)OS|Opera M(obi|ini)/.test(ua)) {
         return "mobile";
     }
+    else if(/Android|webOS|iPhone|iPad|iPod|BlackBerry/i.test(navigator.userAgent) ||
+   (/Android|webOS|iPhone|iPad|iPod|BlackBerry/i.test(navigator.platform))){
+       return "mobile";
+    }
+    else if(('ontouchstart' in document.documentElement && navigator.userAgent.match(/Mobi/))){
+        return "mobile";
+    }
+    else if(window.matchMedia("only screen and (max-width: 760px)").matches){
+        return "mobile";
+    }
     return "desktop";
 }
 var mainTime;
@@ -338,7 +348,7 @@ class Game {
                 }
                 if (player.collide(this.array[h][i][j]) && this.array[h][i][j].type == "P") {
                     this.current.level += this.current.level < this.array.length ? 1 : 0;
-                    var portal = String(Number(this.array[this.current.level].join(" ").indexOf("P"))/10).split(".")[1];
+                    var portal = String(Number(this.array[this.current.level+1].join(" ").indexOf("P"))/10).split(".")[1];
                     player.stats.x =  (portal > 5 ? 9: 0) * game.avgTileWidth ;
                     player.stats.y = 0;
                     console.log(player.stats.x);
@@ -716,6 +726,10 @@ function createLevels() {
                         currentRow.push("g");
                         continue;
                     }
+                    if (currentArray[j - 1][k].charAt() == "m" && j > 5) {
+                        currentRow.push("t");
+                        continue;
+                    }
 
                     if(currentArray[j - 1][k] == "c" && j < 5){
                         currentRow.push("t");
@@ -723,7 +737,7 @@ function createLevels() {
                     }
                 }
                 if (j > 5) {
-                    currentRow.push(["t", "0"][Math.round(Math.random() * 1)]);
+                    currentRow.push(["m:" + 0.40 + ":50: 50","t", "0", "0"][Math.round(Math.random() * 3)]);
                 }
                 else {
                     currentRow.push(["c", "t", "0", "0", "0", "0", "0", "0", "0", "0", "0"][Math.round(Math.random() * 10)]);
