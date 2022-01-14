@@ -432,7 +432,7 @@ class Game {
         ctx.beginPath();
         var text = game.coins;
         ctx.fillStyle = "gold";
-        ctx.font = "30px Impact";
+        ctx.font = "60px pixel";
         ctx.fillText(text, canvas.width - 75, 45);
         ctx.fillText("Level: " + Math.round(game.current.level + 1), 50, 45);
         ctx.fillStyle = "red";
@@ -564,10 +564,10 @@ class Player {
         clearInterval(ninjastars);
         ctx.beginPath();
         ctx.fillStyle = "red";
-        ctx.font = "60px Impact";
+        ctx.font = "90px pixel";
         ctx.fillText("Game Over", canvas.width / 2 - 100, canvas.height / 2 - 100);
         ctx.fillStyle = "green";
-        ctx.font = "30px Arial";
+        ctx.font = "60px pixel";
         if (time / 1000 > Number(localStorage.highScore)) {
             ctx.fillText("You survived for " + time / 1000 + " seconds! Beating your old highscore( " + Number(localStorage.highScore) + "s ) by " + Math.abs(Number(localStorage.highScore) - time / 1000).toFixed(2) + " seconds!", canvas.width / 6, canvas.height / 2);
             localStorage.highScore = time / 1000;
@@ -721,13 +721,12 @@ function createLevels() {
                         currentRow.push("t");
                         continue;
                     }
-     
                 }
                 if (j > 5) {
                     currentRow.push(["t", "0"][Math.round(Math.random() * 1)]);
                 }
                 else {
-                    currentRow.push(["c", "0", "0", "0", "0", "0", "0", "0", "0", "0"][Math.round(Math.random() * 9)]);
+                    currentRow.push(["c", "t", "0", "0", "0", "0", "0", "0", "0", "0", "0"][Math.round(Math.random() * 10)]);
                 }
 
 
