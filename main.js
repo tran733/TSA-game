@@ -115,7 +115,7 @@ class Component {
             this.y += game.avgTileHeight - this.height;
         }
         this.types = {
-            g: "#471303",
+            g: "#1c5200",
             "0": "none",
             p: "pink",
             "P": "purple",
@@ -133,7 +133,7 @@ class Component {
         this.images = {
             "c": { row: 1, cols: 3, multiplierX1: 0.3, multiplierX2: 0.6, width: 50, height: this.height, multiplierY1: 0.1, multiplierY2: 0.25 },
             "a": { row: 1, cols: 9, multiplierX1: 0, multiplierX2: 0, width: 70, height: 1.15 * this.height, multiplierY1: 0.06, multiplierY2: 0 },
-            "t": { image: 1 },
+            "t": { row: 1, cols: 4, multiplierX1: 0, multiplierX2: 0, width: this.width, height: this.height, multiplierY1: 0, multiplierY2: 0 },
             "m": { image: 1 },
             "al": { row: 1, cols: 1, multiplierX1: 0, multiplierX2: 0, width: 40, height: 10, multiplierY1: 0, multiplierY2: 0 },
             "ar": { row: 1, cols: 1, multiplierX1: 0, multiplierX2: 0, width: 40, height: 10, multiplierY1: 0, multiplierY2: 0 },
@@ -383,6 +383,7 @@ class Game {
                     var portal = String(Number(this.array[this.current.level + 1].join(" ").indexOf("P")) / 10).split(".")[1];
                     player.stats.x = (portal > 5 ? 9 : 0) * game.avgTileWidth;
                     player.stats.y = 0;
+                    game.objects.thrown = [];
                 }
                 if (player.collide(this.array[h][i][j]) && this.array[h][i][j].type == "m") {
                     this.array[h][i][j] = 0;
@@ -462,6 +463,10 @@ class Game {
             player.health = 0;
         }
         if (player.health < 1) {
+            document.getElementById("gameover").style.width = window.innerWidth + "px";
+            document.getElementById("gameover").style.height = window.innerHeight + "px";
+            document.getElementById("gameover").style.display = "block";
+            document.getElementById("clouds").style.display = "none";
             player.die();
             return;
 
@@ -604,10 +609,11 @@ class Player {
     die() {
         clearInterval(mainTime);
         clearInterval(ninjastars);
-        ctx.beginPath();
-        ctx.fillStyle = "red";
-        ctx.font = "90px pixel";
-        ctx.fillText("Game Over", canvas.width / 2 - 100, canvas.height / 2 - 100);
+        clearInterval(generator);
+        document.getElementById("GAMEOVER").style.display = "block";
+        document.getElementById("RETRY").style.display = "block";
+
+        /*
         ctx.fillStyle = "green";
         ctx.font = "60px pixel";
         if (time / 1000 > Number(localStorage.highScore)) {
@@ -620,6 +626,8 @@ class Player {
         }
         ctx.fillStyle = "yellow";
         ctx.fillText("And collected " + game.coins + " coins", canvas.width / 4, canvas.height / 2 + 50);
+                */
+
         ctx.closePath();
     }
     draw() {
@@ -755,7 +763,7 @@ function createLevels() {
                     currentRow.push("g");
                     continue;
                 }
-                if (currentArray[j - 1][k].charAt(0) == "m" && j > 5) {
+                if (currentArray[j - 1][k].charAt(0) == "m") {
                     currentRow.push("t");
                     continue;
                 }
@@ -764,16 +772,15 @@ function createLevels() {
                     continue;
                 }
 
-                if (currentArray[j - 1][k] == "c" && j < 5) {
-                    currentRow.push("t");
-                    continue;
-                }
             }
             if (j > 5) {
-                currentRow.push(["m:" + 0.40 + ":50: 50","m:" + 0.40 + ":50: 50",  "t","t", "0", "0", "0", "a"][Math.round(Math.random() * 7)]);
+                currentRow.push(["m:" + 0.40 + ":50: 50","0",  "t","t", "0", "0", "0"][Math.round(Math.random() * 7)]);
             }
             else {
-                currentRow.push(["c", "t", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"][Math.round(Math.random() * 11)]);
+                currentRow.push(["a","0","m:" + 0.40 + ":50: 50", "t", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"][Math.round(Math.random() * 13)]);
+            }
+            if(currentRow[k] == undefined){
+                currentRow[k] = "0";
             }
 
 
@@ -839,7 +846,7 @@ function start() {
     }, 10);
     ninjastars = setInterval(function () {
         if (game.objects.thrown.length != 0) {
-
+  
             for (var i = 0; i < game.objects.thrown.length; i++) {
 
                 for (let j = 0; j < game.array[game.current.level].length; j++) {
@@ -848,7 +855,10 @@ function start() {
                         if (game.objects.thrown.length == 0) {
                             return;
                         }
-                        if (game.objects.thrown[i].collide(game.array[game.current.level][j][k]) && game.array[game.current.level][j][k].type != 0) {
+                        if(game.objects.thrown[i] == undefined){
+                            return;
+                        }
+                        if (game.objects.thrown[i].collide(game.array[game.current.level][j][k]) && game.array[game.current.level][j][k].type != 0 && (game.objects.thrown[i].type.charAt(0) != "a")) {
                             if ((game.array[game.current.level][j][k].type == "m" || game.array[game.current.level][j][k].type == "a" )&& game.objects.thrown[i].type.indexOf("n") > -1) {
                                 game.array[game.current.level][j][k] = 0;
                             }
@@ -875,4 +885,15 @@ function start() {
             }
         }
     }, 10);
+}
+function restrart(){
+    document.getElementById("clouds").style.display = "block";
+    document.getElementById("GAMEOVER").style.display = "none";
+    document.getElementById("gameover").style.display = "none";
+    document.getElementById("RETRY").style.display = "none";
+    player.health = 3;
+    game.current.level = 0;
+    player.stats.x = 0;
+    player.stats.y = 0;
+    start();
 }
