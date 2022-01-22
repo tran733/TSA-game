@@ -306,7 +306,7 @@ class Game {
                 [0, 0, 0, 0, 0, 0, 0, P, 0, 0],
                 [0, 0, 0, 0, 0, 0, 0, g, 0, 0],
                 [0, 0, 0, g, g, 0, 0, 0, 0, 0],
-                [0, "m:0.25:70:50", 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, "m:0.25:70:50", 0, 0, 0, 0, 0, 0, "a", 0],
                 [0, g, 0, 0, 0, 0, 0, g, g, 0],
                 [0, 0, 0, 0, t, 0, 0, 0, 0, 0],
                 [0, 0, 0, t, g, t, 0, "m:0.25:100:50", 0, 0],
@@ -317,10 +317,10 @@ class Game {
                 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                 [0, 0, 0, 0, P, P, 0, 0, 0, 0],
                 [0, 0, 0, 0, g, g, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                ["a", 0, 0, 0, 0, 0, 0, 0, 0, "a"],
                 [g, 0, 0, 0, "m:2:100:50", 0, 0, 0, 0, g],
                 [0, 0, 0, 0, g, g, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                ["a", 0, 0, 0, 0, 0, 0, 0, 0, 0],
                 [g, 0, 0, 0, 0, 0, 0, 0, 0, g],
                 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                 [t, t, t, t, t, t, t, t, t, t]
@@ -462,28 +462,31 @@ class Game {
         if (player.stats.y > canvas.height) {
             player.health = 0;
         }
+        
         if (player.health < 1) {
             document.getElementById("gameover").style.width = window.innerWidth + "px";
             document.getElementById("gameover").style.height = window.innerHeight + "px";
             document.getElementById("gameover").style.display = "block";
             document.getElementById("clouds").style.display = "none";
             player.die();
+            document.getElementById("HEALTHINSIDE").style.width = 0 + "%";
+
             return;
 
         }
+        document.getElementById("HEALTHINSIDE").style.width = Math.round(player.health * (14/3)) + "%";
+
         if (test) {
             player.health = Infinity;
         }
-        ctx.drawImage(heart, canvas.width - 225, 10, 40, 40)
         coin.draw();
         ctx.beginPath();
         var text = game.coins;
         ctx.fillStyle = "gold";
         ctx.font = "60px pixel";
-        ctx.fillText(text, canvas.width - 75, 45);
-        ctx.fillText("Level: " + Math.round(game.current.level + 1), 50, 45);
-        ctx.fillStyle = "red";
-        ctx.fillText(player.health, canvas.width - 250 - (String(player.health).length * 20), 45);
+        ctx.fillText(text, canvas.width / 6, 45);
+        ctx.fillText("LEVEL: " + game.current.level , canvas.width * 4/6, 45);
+
         ctx.closePath();
         if (player.right && !player.stats.noright && player.stats.x + player.stats.width + player.amount.x < canvas.width) {
             player.stats.x += player.amount.x;
@@ -745,7 +748,7 @@ class Player {
 }
 const game = new Game();
 const player = new Player(100, 150, canvas.width / 25, canvas.height / 10, "yellow");
-const coin = new Component(canvas.width - 150, 0, 40, 60, "c");
+const coin = new Component(canvas.width /9, -10, 40, 60, "c");
 function createLevels() {
     var currentArray = [];
     var portal = Math.round((Math.random() * 4) + 2) + ":" + Math.round(Math.random() * 7);
@@ -840,7 +843,7 @@ function start() {
 
     });
 
-    generator = setInterval(createLevels, 1000);
+    generator = setInterval(createLevels, 2000);
     mainTime = setInterval(function () {
         game.draw();
     }, 10);
@@ -894,6 +897,6 @@ function restrart(){
     player.health = 3;
     game.current.level = 0;
     player.stats.x = 0;
-    player.stats.y = 0;
+    player.stats.y = 100;
     start();
 }
