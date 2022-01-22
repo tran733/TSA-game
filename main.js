@@ -230,7 +230,7 @@ class Component {
                         left ? { type: "al", direction: "negative" }
                             : { type: "ar", direction: "positive" };
                     var startingpoint = this.x + (kind.type == "ar" ? 100 : kind.type == "al" ? -100 : 100);
-                    if (game.objects.thrown.length < 3|| game.objects.thrown[game.objects.thrown.length - 1].x - startingpoint > 100)
+                    if (game.objects.thrown.length < Infinity|| game.objects.thrown[game.objects.thrown.length - 1].x - startingpoint > 100)
                         game.objects.thrown.push(new Component(startingpoint,
                             this.y + this.height / 5, 50, 25, kind.type, kind.direction));
                         }
@@ -290,11 +290,11 @@ class Game {
                 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                 [0, 0, 0, 0, P, P, 0, 0, 0, 0],
                 [0, 0, 0, 0, g, g, 0, 0, "m:1:100:50", 0],
-                [0, 0, "a", 0, 0, 0, 0, 0, g, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, g, 0],
                 [0, 0, g, 0, 0, 0, 0, 0, 0, 0],
                 [0, 0, 0, 0, "m:2:70:50", 0, 0, 0, 0, 0],
                 [0, 0, 0, g, g, g, g, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0, "a"],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                 [t, t, t, t, t, t, t, t, t, t],
                 [g, g, g, g, g, g, g, g, g, g]
 
@@ -306,7 +306,7 @@ class Game {
                 [0, 0, 0, 0, 0, 0, 0, P, 0, 0],
                 [0, 0, 0, 0, 0, 0, 0, g, 0, 0],
                 [0, 0, 0, g, g, 0, 0, 0, 0, 0],
-                [0, "m:0.25:70:50", 0, 0, 0, 0, 0, 0, "a", 0],
+                [0, "m:0.25:70:50", 0, 0, 0, 0, 0, 0, 0, 0],
                 [0, g, 0, 0, 0, 0, 0, g, g, 0],
                 [0, 0, 0, 0, t, 0, 0, 0, 0, 0],
                 [0, 0, 0, t, g, t, 0, "m:0.25:100:50", 0, 0],
@@ -317,10 +317,10 @@ class Game {
                 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                 [0, 0, 0, 0, P, P, 0, 0, 0, 0],
                 [0, 0, 0, 0, g, g, 0, 0, 0, 0],
-                ["a", 0, 0, 0, 0, 0, 0, 0, 0, "a"],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                 [g, 0, 0, 0, "m:2:100:50", 0, 0, 0, 0, g],
                 [0, 0, 0, 0, g, g, 0, 0, 0, 0],
-                ["a", 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                 [g, 0, 0, 0, 0, 0, 0, 0, 0, g],
                 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                 [t, t, t, t, t, t, t, t, t, t]
@@ -485,7 +485,7 @@ class Game {
         ctx.fillStyle = "gold";
         ctx.font = "60px pixel";
         ctx.fillText(text, canvas.width / 6, 45);
-        ctx.fillText("LEVEL: " + game.current.level , canvas.width * 4/6, 45);
+        ctx.fillText("LEVEL: " + (game.current.level + 1), canvas.width * 4/6, 45);
 
         ctx.closePath();
         if (player.right && !player.stats.noright && player.stats.x + player.stats.width + player.amount.x < canvas.width) {
@@ -522,7 +522,7 @@ class Game {
         }
         if (player.jump) {
             player.stats.y -= player.amount.y;
-            player.stats.spriteRow = 2;
+            player.stats.spriteRow = 5;
         }
 
         time += 10;
@@ -645,38 +645,39 @@ class Player {
         if (currentSprite == "ninSprite") {
             currentSprite = "ninSprite";
 
-            if (!player.jump && !player.throw)
-                player.stats.spriteCol = player.stats.spriteCol < 3 ? player.stats.spriteCol + 1 : 0;
+            if (!player.jump && !player.throw && ((this.left || this.right) &&  String(time/100).indexOf(".") == -1) )
+                player.stats.spriteCol = player.stats.spriteCol < 7 ? player.stats.spriteCol + 1 : 0;
             if ((player.jump) && player.left) player.stats.spriteCol = 0;
-            if ((player.jump) && player.right) player.stats.spriteCol = 2;
+            if ((player.jump) && player.right) player.stats.spriteCol = 3;
 
             if ((player.amount.y - player.gravitySpeed) < 0 && player.left) {
                 currentSprite = "ninSprite";
                 player.stats.spriteRow = 2;
-                player.stats.spriteCol = 1;
+                player.stats.spriteCol = 0;
             }
             if ((player.amount.y - player.gravitySpeed) < 0 && player.right) {
                 currentSprite = "ninSprite";
                 player.stats.spriteRow = 2;
-                player.stats.spriteCol = 3;
+                player.stats.spriteCol = 4;
             }
             if (this.stats.shoot && this.right) {
                 currentSprite = "ninSprite";
-                this.stats.spriteCol = 3;
+                this.stats.spriteCol = 0;
                 this.stats.spriteRow = 3;
             }
             if (this.stats.shoot && this.left) {
                 currentSprite = "ninSprite";
 
-                this.stats.spriteCol = 2;
-                this.stats.spriteRow = 3;
+                this.stats.spriteCol = 0;
+                this.stats.spriteRow = 4;
             }
             var sprite = whichSprite();
+            console.log(sprite.width);
             ctx.drawImage(sprite,
-                this.stats.spriteCol * (sprite.width / 4) + (sprite.width / 16),
-                this.stats.spriteRow * (sprite.height / 5) + (sprite.width / 16),
-                (1 / 2) * (sprite.width / 4),
-                (1 / 2) * (sprite.height / 5),
+                this.stats.spriteCol * (sprite.width / 8),
+                this.stats.spriteRow * (sprite.height / 6),
+                (sprite.width / 8) - (sprite.width / 33),
+                (sprite.height / 6)  - (sprite.width / 70),
                 this.stats.x,
                 this.stats.y,
                 this.stats.width,
@@ -747,14 +748,20 @@ class Player {
     }
 }
 const game = new Game();
-const player = new Player(100, 150, canvas.width / 25, canvas.height / 10, "yellow");
+const player = new Player(100, 150, canvas.width / 25, canvas.height / 11, "yellow");
 const coin = new Component(canvas.width /9, -10, 40, 60, "c");
 function createLevels() {
-    var currentArray = [];
+    var currentArray = [
+    ];
     var portal = Math.round((Math.random() * 4) + 2) + ":" + Math.round(Math.random() * 7);
-    for (var j = 0; j < 10; j++) {
+    var archer = 6;
+    for (var j = 0; j < 11; j++) {
         var currentRow = [];
-        for (var k = 0; k < 10; k++) {
+        for (var k = 0; k < 11; k++) {
+            if( j < 2){
+                currentRow.push("0");
+                continue;
+            }
             if (j == portal.split(":")[0] && k == portal.split(":")[1]) {
                 currentRow.push("P");
                 continue;
@@ -776,11 +783,13 @@ function createLevels() {
                 }
 
             }
-            if (j > 5) {
+            if (j > 6) {
                 currentRow.push(["m:" + 0.40 + ":50: 50","0",  "t","t", "0", "0", "0"][Math.round(Math.random() * 7)]);
             }
             else {
-                currentRow.push(["a","0","m:" + 0.40 + ":50: 50", "t", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"][Math.round(Math.random() * 13)]);
+                const value = [game.array.length > 16 && archer > 0? "a" : "c","0","m:" + 0.40 + ":50: 50", "t", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"][Math.round(Math.random() * 13)];
+                archer -= value == "a" ? 1: 0;
+                currentRow.push(value);
             }
             if(currentRow[k] == undefined){
                 currentRow[k] = "0";
@@ -871,7 +880,7 @@ function start() {
                 }
 
                 if (player.collide(game.objects.thrown[i])) {
-                    player.health -= game.objects.thrown[i].type.charAt(0) == "n" ? 1 : 2;
+                    player.health -= 1;
                     game.objects.thrown.splice(i, 1);
                     continue;
 
@@ -890,13 +899,5 @@ function start() {
     }, 10);
 }
 function restrart(){
-    document.getElementById("clouds").style.display = "block";
-    document.getElementById("GAMEOVER").style.display = "none";
-    document.getElementById("gameover").style.display = "none";
-    document.getElementById("RETRY").style.display = "none";
-    player.health = 3;
-    game.current.level = 0;
-    player.stats.x = 0;
-    player.stats.y = 100;
-    start();
+    window.location.reload();
 }
