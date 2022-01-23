@@ -54,6 +54,8 @@ const slimeballLeft = new Image();
 slimeballLeft.src = "slimeball-left.png";
 const slimeballRight = new Image();
 slimeballRight.src = "slimeball-right.png";
+const spikeBottom = new Image();
+spikeBottom.src = "spike-bottom.png";
 var currentSprite = "ninMain";
 var time = 0;
 function whichSprite() {
@@ -127,14 +129,16 @@ class Component {
             "sr": "slimeball-right.png",
             "al": "arrow-left2.png",
             "ar": "arrow-right2.png",
+            "s": "spike-bottom.png",
             "a": this.x > canvas.width / 2 ? "archer-left.png" : "archer-right.png",
             "m": Math.sign(moveAmount) == "-1" ? "slimeleft.png" : "slimeright.png"
         }
         this.images = {
             "c": { row: 1, cols: 3, multiplierX1: 0.3, multiplierX2: 0.6, width: 50, height: this.height, multiplierY1: 0.1, multiplierY2: 0.25 },
-            "a": { row: 1, cols: 9, multiplierX1: 0, multiplierX2: 0, width: 70, height: 1.15 * this.height, multiplierY1: 0.06, multiplierY2: 0 },
+            "a": { row: 1, cols: 10, multiplierX1: 0, multiplierX2: 0, width: 70, height: 1.15 * this.height, multiplierY1: 0.06, multiplierY2: 0 },
             "t": { row: 1, cols: 4, multiplierX1: 0, multiplierX2: 0, width: this.width, height: this.height, multiplierY1: 0, multiplierY2: 0 },
             "m": { image: 1 },
+            "s": { image: 1 },
             "al": { row: 1, cols: 1, multiplierX1: 0, multiplierX2: 0, width: 40, height: 10, multiplierY1: 0, multiplierY2: 0 },
             "ar": { row: 1, cols: 1, multiplierX1: 0, multiplierX2: 0, width: 40, height: 10, multiplierY1: 0, multiplierY2: 0 },
             "nl": { row: 1, cols: 1, multiplierX1: 0, multiplierX2: 0, width: 40, height: 20, multiplierY1: 0, multiplierY2: 0 },
@@ -223,7 +227,7 @@ class Component {
 
                 }
                 if (this.type == "a" && String(this.time / 200).indexOf(".") == -1 ) {
-                    if(this.frame == 5){
+                    if(this.frame == 4){
                     var left = this.x > canvas.width / 2;
                     var right = this.x < canvas.width / 2;
                     var kind = right ? { type: "ar", direction: "positive" } :
@@ -410,6 +414,9 @@ class Game {
                     );
                     game.coins += 1;
                 }
+                if (player.collide(this.array[h][i][j]) && this.array[h][i][j].type == "s") {
+                    player.health -= 3;
+                }
                 if (player.collide(this.array[h][i][j]) && this.array[h][i][j].type != "0") {
                     var rockbottom = this.array[h][i][j].y - player.stats.height;
                     var rocktop = this.array[h][i][j].y + this.array[h][i][j].height + player.stats.height;
@@ -523,6 +530,12 @@ class Game {
         if (player.jump) {
             player.stats.y -= player.amount.y;
             player.stats.spriteRow = 5;
+            if(player.left){
+                player.stats.currentCol = 0;
+            }
+            if(player.right){
+                player.stats.currentCol = 3;
+            }
         }
 
         time += 10;
@@ -644,21 +657,20 @@ class Player {
         }
         if (currentSprite == "ninSprite") {
             currentSprite = "ninSprite";
+            if ( !player.throw && ((this.left || this.right) &&  String(time/100).indexOf(".") == -1) )
+                player.stats.spriteCol = player.stats.spriteCol < (player.jump ? (player.left ? 2: 5) :7) ? player.stats.spriteCol + 1 : (player.jump ? (player.right ? 3: 0) :0);
 
-            if (!player.jump && !player.throw && ((this.left || this.right) &&  String(time/100).indexOf(".") == -1) )
-                player.stats.spriteCol = player.stats.spriteCol < 7 ? player.stats.spriteCol + 1 : 0;
-            if ((player.jump) && player.left) player.stats.spriteCol = 0;
-            if ((player.jump) && player.right) player.stats.spriteCol = 3;
 
             if ((player.amount.y - player.gravitySpeed) < 0 && player.left) {
                 currentSprite = "ninSprite";
-                player.stats.spriteRow = 2;
+                player.stats.spriteRow = 5;
                 player.stats.spriteCol = 0;
             }
             if ((player.amount.y - player.gravitySpeed) < 0 && player.right) {
                 currentSprite = "ninSprite";
                 player.stats.spriteRow = 2;
                 player.stats.spriteCol = 4;
+
             }
             if (this.stats.shoot && this.right) {
                 currentSprite = "ninSprite";
@@ -783,6 +795,12 @@ function createLevels() {
                 }
 
             }
+            if(j == 10){
+                if(currentArray[j - 1][k] == "0"){
+                    currentRow.push("s");
+                    continue;
+                }
+            }
             if (j > 6) {
                 currentRow.push(["m:" + 0.40 + ":50: 50","0",  "t","t", "0", "0", "0"][Math.round(Math.random() * 7)]);
             }
@@ -889,7 +907,7 @@ function start() {
                     game.objects.thrown.shift();
                     continue;
                 }
-                var speed = (game.objects.thrown[i].type.charAt(0) == "s" || game.objects.thrown[i].type.charAt(0) == "a" ? (game.current.level+0.1)+1.5: 5);
+                var speed = (game.objects.thrown[i].type.charAt(0) == "s" || game.objects.thrown[i].type.charAt(0) == "a" ? (game.current.level/100+0.1) + 2: 5);
                 game.objects.thrown[i].x += game.objects.thrown[i].move == "positive" ?  speed: game.objects.thrown[i].move == "negative" ? -speed : speed;
                 game.objects.thrown[i].draw();
 
