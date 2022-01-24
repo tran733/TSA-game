@@ -137,7 +137,7 @@ class Component {
             "c": { row: 1, cols: 3, multiplierX1: 0.3, multiplierX2: 0.6, width: 50, height: this.height, multiplierY1: 0.1, multiplierY2: 0.25 },
             "a": { row: 1, cols: 10, multiplierX1: 0, multiplierX2: 0, width: 70, height: 1.15 * this.height, multiplierY1: 0.06, multiplierY2: 0 },
             "t": { row: 1, cols: 4, multiplierX1: 0, multiplierX2: 0, width: this.width, height: this.height, multiplierY1: 0, multiplierY2: 0 },
-            "m": { image: 1 },
+            "m": { row: 1, cols: 7, multiplierX1: 0, multiplierX2: 0, width: this.width, height: this.height, multiplierY1: 0, multiplierY2: 0 },
             "s": { image: 1 },
             "al": { row: 1, cols: 1, multiplierX1: 0, multiplierX2: 0, width: 40, height: 10, multiplierY1: 0, multiplierY2: 0 },
             "ar": { row: 1, cols: 1, multiplierX1: 0, multiplierX2: 0, width: 40, height: 10, multiplierY1: 0, multiplierY2: 0 },
@@ -227,7 +227,7 @@ class Component {
 
                 }
                 if (this.type == "a" && String(this.time / 200).indexOf(".") == -1 ) {
-                    if(this.frame == 4){
+                    if(this.frame == 6){
                     var left = this.x > canvas.width / 2;
                     var right = this.x < canvas.width / 2;
                     var kind = right ? { type: "ar", direction: "positive" } :
@@ -492,7 +492,7 @@ class Game {
         ctx.fillStyle = "gold";
         ctx.font = "60px pixel";
         ctx.fillText(text, canvas.width / 6, 45);
-        ctx.fillText("LEVEL: " + (game.current.level + 1), canvas.width * 4/6, 45);
+        ctx.fillText("LEVEL: " + (game.current.level + 1), canvas.width * 5/6, 45);
 
         ctx.closePath();
         if (player.right && !player.stats.noright && player.stats.x + player.stats.width + player.amount.x < canvas.width) {
@@ -577,7 +577,7 @@ class Player {
         this.color = color;
         this._speedY = 0;
         this.amount = { x: 3, y: 4 }
-        this.gravity = 0.045;
+        this.gravity = 0.04;
         this._gravitySpeed = 0;
     }
     get health() {
@@ -900,6 +900,7 @@ function start() {
                 if (player.collide(game.objects.thrown[i])) {
                     player.health -= 1;
                     game.objects.thrown.splice(i, 1);
+                    player.amount.x *= 5/6;
                     continue;
 
                 }
