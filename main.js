@@ -120,6 +120,7 @@ class Component {
             g: "#1c5200",
             "0": "none",
             p: "pink",
+            y: "yellow",
             "P": "purple",
             "c": "coin.png",
             "t": "platform.png",
@@ -281,6 +282,7 @@ class Game {
         var P = "P";
         var c = "c";
         var t = "t";
+        var y = "y";
         this.objects = {
             thrown: []
         }
@@ -291,67 +293,77 @@ class Game {
         this.array = [
 
             [
-                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, P, P, 0, 0, 0, 0],
-                [0, 0, 0, 0, g, g, 0, 0, "m:1:100:50", 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, g, 0],
-                [0, 0, g, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, "m:2:70:50", 0, 0, 0, 0, 0],
-                [0, 0, 0, g, g, g, g, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [t, t, t, t, t, t, t, t, t, t],
-                [g, g, g, g, g, g, g, g, g, g]
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [y, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, P, P],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, P, P],
+                [t, t, t, t, t, t, t, t, t, t, t, t],
+                [g, g, g, g, g, g, g, g, g, g, g, g]
 
             ]
 
             ,
             [
-                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, P, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, g, 0, 0],
-                [0, 0, 0, g, g, 0, 0, 0, 0, 0],
-                [0, "m:0.25:70:50", 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, g, 0, 0, 0, 0, 0, g, g, 0],
-                [0, 0, 0, 0, t, 0, 0, 0, 0, 0],
-                [0, 0, 0, t, g, t, 0, "m:0.25:100:50", 0, 0],
-                [t, t, t, g, g, g, t, t, t, t,],
-                [g, g, g, g, g, g, g, g, g, g]
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [y, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, t, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, t, 0, 0, 0, 0, 0, P, P],
+                [0, 0, 0, t, g, t, 0, 0, 0, 0, P, P],
+                [t, t, t, g, g, g, t, t, t, t, t, t],
+                [g, g, g, g, g, g, g, g, g, g, g, g]
             ],
             [
-                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, P, P, 0, 0, 0, 0],
-                [0, 0, 0, 0, g, g, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [g, 0, 0, 0, "m:2:100:50", 0, 0, 0, 0, g],
-                [0, 0, 0, 0, g, g, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [g, 0, 0, 0, 0, 0, 0, 0, 0, g],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [t, t, t, t, t, t, t, t, t, t]
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, g, 0, 0, 0, 0, 0, 0, 0, 0],
+                [y, 0, g, g, g, 0, 0, 0, 0, 0, 0, 0],
+                [0, g, g, g, g, g, g, g, g, g, g, 0],
+                [g, g, g, g, g, g, g, g, g, g, g, 0],
+                [g, g, 0, 0, g, g, g, g, g, g, 0, 0],
+                [g, g, 0, 0, 0, 0, g, g, g, 0, 0, 0],
+                [g, g, P, P, 0, 0, 0, 0, 0, 0, 0, 0],
+                [g, g, P, P, 0, c, 0, c, 0, c, 0, 0],
+                [t, t, t, t, t, t, t, t, t, t, t, t]
             ],
             [
-                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, c, 0, 0, 0, P, P, 0],
-                [0, "m:.15:70:50", c, g, 0, 0, 0, P, P, 0],
-                [0, g, g, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0, g],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, "m:-2:70:50", 0, 0, 0, 0, 0],
-                [t, c, 0, 0, g, g, 0, 0, c, t],
-                [t, t, 0, 0, 0, 0, 0, 0, t, t],
-                [g, g, g, g, g, g, g, g, g, g]
+                [0, 0, 0, 0, 0, g, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, g, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, g, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, g, 0, 0, 0, 0, 0, 0],
+                [y, 0, 0, 0, g, g, g, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, "m:-2:70:50", 0, 0, 0, P, P ],
+                [0, 0, 0, 0, g, g, g, g, 0, 0, P, P],
+                [0, 0, 0, g, g, g, g, g, g, 0, 0, 0],
+                [0, 0, g, g, g, g, g, g, g, g, 0, 0],
+                [0, g, g, g, g, g, g, g, g, g, g, 0],
+                [t, t, t, t, t, t, t, t, t, t, t, t],
+                [g, g, g, g, g, g, g, g, g, g, g, g]
             ],
             [
-                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, "m:2:75:50", c, 0, 0, 0, g, g, 0],
-                [0, g, g, g, 0, 0, 0, 0, c, 0],
-                [0, 0, 0, 0, 0, 0, g, 0, g, g],
-                [g, g, 0, c, "m:2:50:50", 0, 0, g, 0, 0],
-                [0, 0, 0, g, g, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, t, 0, P, P, 0, 0, t, 0, 0],
-                [t, g, t, t, t, t, t, t, g, t]
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "m:-1:70:50", 0],
+                [y, 0, 0, c, 0, 0, 0, 0, 0, P, P, 0],
+                [0, 0, 0, g, 0, 0, c, 0, 0, P, P, 0],
+                [0, 0, 0, 0, 0, 0, g, 0, 0, 0, 0, 0],
+                [0, 0, 0, c, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, g, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                ["s", "s", "s", "s", "s", "s", "s", "s", "s", "s", "s", "s"],
+                [g, g, g, g, g, g, g, g, g, g, g, g]
             ]
 
 
@@ -384,9 +396,8 @@ class Game {
                 }
                 if (player.collide(this.array[h][i][j]) && this.array[h][i][j].type == "P") {
                     this.current.level += this.current.level < this.array.length ? 1 : 0;
-                    var portal = String(Number(this.array[this.current.level + 1].join(" ").indexOf("P")) / 10).split(".")[1];
-                    player.stats.x = (portal > 5 ? 9 : 0) * game.avgTileWidth;
-                    player.stats.y = 0;
+                    player.stats.x = 0;
+                    player.stats.y = canvas.height/ this.array[this.current.level].length;
                     game.objects.thrown = [];
                 }
                 if (player.collide(this.array[h][i][j]) && this.array[h][i][j].type == "m") {
@@ -481,7 +492,7 @@ class Game {
             return;
 
         }
-        document.getElementById("HEALTHINSIDE").style.width = Math.round(player.health * (14/3)) + "%";
+        document.getElementById("HEALTHINSIDE").style.width = player.health * (11.3/3) + "%";
 
         if (test) {
             player.health = Infinity;
@@ -577,7 +588,7 @@ class Player {
         this.color = color;
         this._speedY = 0;
         this.amount = { x: 3, y: 4 }
-        this.gravity = 0.04;
+        this.gravity = 0.06;
         this._gravitySpeed = 0;
     }
     get health() {
@@ -760,20 +771,25 @@ class Player {
     }
 }
 const game = new Game();
-const player = new Player(100, 150, canvas.width / 25, canvas.height / 11, "yellow");
+const player = new Player(100, 150, canvas.width / 24, canvas.height / 12, "yellow");
 const coin = new Component(canvas.width /9, -10, 40, 60, "c");
 function createLevels() {
     var currentArray = [
     ];
-    var portal = Math.round((Math.random() * 4) + 2) + ":" + Math.round(Math.random() * 7);
+    var portal = Math.round((Math.random() * 4) + 4) + ":" + Math.round((Math.random() * 7) + 3);
     var archer = 6;
-    for (var j = 0; j < 11; j++) {
+    for (var j = 0; j < 12; j++) {
         var currentRow = [];
-        for (var k = 0; k < 11; k++) {
-            if( j < 2){
+        for (var k = 0; k < 12; k++) {
+            if(j == 2 && k == 0){
+                currentRow.push("y");
+                continue;
+            }
+            if( j < 4){
                 currentRow.push("0");
                 continue;
             }
+
             if (j == portal.split(":")[0] && k == portal.split(":")[1]) {
                 currentRow.push("P");
                 continue;
@@ -795,17 +811,18 @@ function createLevels() {
                 }
 
             }
-            if(j == 10){
+            if(j == 11){
                 if(currentArray[j - 1][k] == "0"){
                     currentRow.push("s");
                     continue;
                 }
             }
-            if (j > 6) {
+            if (j > 7) {
                 currentRow.push(["m:" + 0.40 + ":50: 50","0",  "t","t", "0", "0", "0"][Math.round(Math.random() * 7)]);
             }
             else {
                 const value = [game.array.length > 16 && archer > 0? "a" : "c","0","m:" + 0.40 + ":50: 50", "t", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0"][Math.round(Math.random() * 13)];
+
                 archer -= value == "a" ? 1: 0;
                 currentRow.push(value);
             }
