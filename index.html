@@ -83,7 +83,7 @@
         }
         #HEALTHSTRUCTURE {
             position: absolute;
-            width: 25%;
+            width: 20%;
             height: 15%;
             top: 0%;
             left: 0%;
@@ -92,10 +92,10 @@
         }
         #HEALTHINSIDE{
             position: absolute;
-            width: 14%;
+            width: 11.3%;
             height: 3%;
             top: 9%;
-            left: 10.25%;
+            left: 8.1%;
             z-index: 3;
         }
         #RETRY {
@@ -177,7 +177,7 @@
         function move() {
             var elem = document.getElementById("myBar");
             var width = 0;
-            var id = setInterval(frame, localStorage.playedBefore == "false" ? 150 : 0);
+            var id = setInterval(frame, localStorage.playedBefore == "false" ? 50 : 0);
             var loading = document.getElementById("loading");
             function frame() {
                 if (width >= 100) {
