@@ -404,7 +404,7 @@ class Game {
                     this.array[h][i][j] = 0;
                     player.health -= 1;
                 }
-                if (Math.abs(player.stats.x - this.array[h][i][j].x) < 300 && Math.abs(player.stats.y - this.array[h][i][j].y) < 100 && this.array[h][i][j].type == "m" && game.objects.thrown.length < 2 && String(time / 1000).indexOf(".") == -1 && this.current.level >= 10) {
+                if (Math.abs(player.stats.x - this.array[h][i][j].x) < 300 && Math.abs(player.stats.y - this.array[h][i][j].y) < 100 && this.array[h][i][j].type == "m" && game.objects.thrown.length < Infinity && String(time / 1000).indexOf(".") == -1 && this.current.level >= 10) {
                     var left = Math.sign(player.stats.x - this.array[h][i][j].x) == "-1";
                     var right = Math.sign(player.stats.x - this.array[h][i][j].x) == "1";
                     var kind = right ? { type: "sr", direction: "positive" } :
@@ -429,6 +429,7 @@ class Game {
                     player.health -= 3;
                 }
                 if (player.collide(this.array[h][i][j]) && this.array[h][i][j].type != "0") {
+                console.log(player.gravitySpeed);
                     var rockbottom = this.array[h][i][j].y - player.stats.height;
                     var rocktop = this.array[h][i][j].y + this.array[h][i][j].height + player.stats.height;
                     if (player.stats.y > rockbottom && player.stats.y - rockbottom < 6 / 5 * player.amount.y/* && (player.stats.y + player.stats.height) - this.array[h][i][j].y < 3*/) {
@@ -552,7 +553,7 @@ class Game {
         time += 10;
         game.canvas();
         player.stats.y += player.gravitySpeed;
-        player.gravitySpeed += player.gravity;
+        player.gravitySpeed += player.gravitySpeed < 5 ? player.gravity: 0.02;
         player.draw();
 
 
@@ -695,7 +696,6 @@ class Player {
                 this.stats.spriteRow = 4;
             }
             var sprite = whichSprite();
-            console.log(sprite.width);
             ctx.drawImage(sprite,
                 this.stats.spriteCol * (sprite.width / 8),
                 this.stats.spriteRow * (sprite.height / 6),
@@ -771,16 +771,20 @@ class Player {
     }
 }
 const game = new Game();
-const player = new Player(100, 150, canvas.width / 24, canvas.height / 12, "yellow");
+const player = new Player(100, 150, canvas.width / 26, canvas.height / 13, "yellow");
 const coin = new Component(canvas.width /9, -10, 40, 60, "c");
 function createLevels() {
     var currentArray = [
     ];
-    var portal = Math.round((Math.random() * 4) + 4) + ":" + Math.round((Math.random() * 7) + 3);
+    var portal = Math.round((Math.random() * 3) + 1) + ":" + Math.round((Math.random() * 10) + 1);
     var archer = 6;
     for (var j = 0; j < 12; j++) {
         var currentRow = [];
         for (var k = 0; k < 12; k++) {
+            if (j == portal.split(":")[0] && k == portal.split(":")[1]) {
+                currentRow.push("P");
+                continue;
+            }
             if(j == 2 && k == 0){
                 currentRow.push("y");
                 continue;
@@ -790,10 +794,7 @@ function createLevels() {
                 continue;
             }
 
-            if (j == portal.split(":")[0] && k == portal.split(":")[1]) {
-                currentRow.push("P");
-                continue;
-            }
+ 
 
 
             if (j != 0) {
