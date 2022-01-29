@@ -30,6 +30,10 @@ const background = document.getElementById("clouds");
 const mainMusic = document.getElementById("mainMusic");
 const heart = new Image();
 heart.src = "heart.png";
+const laserUp = new Image();
+laserUp.src = "laser-up.png";
+const laserRight = new Image();
+laserRight.src = "laser-right.png";
 const slimeleft = new Image();
 slimeleft.src = "slimeleft.png";
 const archerright = new Image();
@@ -42,8 +46,10 @@ const arrowleft = new Image();
 arrowleft.src = "arrow-left2.png";
 const slimeright = new Image();
 slimeright.src = "slimeright.png";
-const ninMain = new Image();
-ninMain.src = 'Nin-Main.png';
+const ninMainRight = new Image();
+ninMainRight.src = 'Nin-Main-Right.png';
+const ninMainLeft = new Image();
+ninMainLeft.src = 'Nin-Main-Left.png';
 const ninSprite = new Image();
 ninSprite.src = "Nin-Sprite.png";
 const ninjaLeft = new Image();
@@ -56,10 +62,10 @@ const slimeballRight = new Image();
 slimeballRight.src = "slimeball-right.png";
 const spikeBottom = new Image();
 spikeBottom.src = "spike-bottom.png";
-var currentSprite = "ninMain";
+var currentSprite = "ninMainRight";
 var time = 0;
 function whichSprite() {
-    return currentSprite == "ninMain" ? ninMain : ninSprite;
+    return currentSprite == "ninMainRight" ? ninMainRight : currentSprite == "ninMainLeft"? ninMainLeft : ninSprite;
 }
 
 localStorage.device = deviceType();
@@ -105,7 +111,7 @@ if (localStorage != ("mobile" || "tablet")) {
     background.style.height = canvas.height + "px";
 }
 class Component {
-    constructor(x, y, width, height, type, move = "", moveAmount, fullType) {
+    constructor(x, y, width, height, type, move = "", moveAmount, fullType, expandTop = 0) {
         this._x = x;
         this._y = y;
         this.width = width;
@@ -121,7 +127,8 @@ class Component {
             "0": "none",
             p: "pink",
             y: "yellow",
-            "P": "purple",
+            l: this.fullType == "lr" ? "laser-right.png": "laser-up.png",
+            "P": "portal.png",
             "c": "coin.png",
             "t": "platform.png",
             "nl": "starleft.png",
@@ -139,7 +146,9 @@ class Component {
             "a": { row: 1, cols: 10, multiplierX1: 0, multiplierX2: 0, width: 70, height: 1.15 * this.height, multiplierY1: 0.06, multiplierY2: 0 },
             "t": { row: 1, cols: 4, multiplierX1: 0, multiplierX2: 0, width: this.width, height: this.height, multiplierY1: 0, multiplierY2: 0 },
             "m": { row: 1, cols: 7, multiplierX1: 0, multiplierX2: 0, width: this.width, height: this.height, multiplierY1: 0, multiplierY2: 0 },
+            "l": { row: 1, cols: 4, multiplierX1: 0, multiplierX2: 0, width: this.fullType == "l" ? this.width/3: this.width, height: this.height, multiplierY1: 0, multiplierY2: 0 },
             "s": { image: 1 },
+            "P": { row: 1, cols: 1, multiplierX1: 0, multiplierX2: 0, width: this.width, height: 2 * this.height, multiplierY1: 0, multiplierY2: 0 },
             "al": { row: 1, cols: 1, multiplierX1: 0, multiplierX2: 0, width: 40, height: 10, multiplierY1: 0, multiplierY2: 0 },
             "ar": { row: 1, cols: 1, multiplierX1: 0, multiplierX2: 0, width: 40, height: 10, multiplierY1: 0, multiplierY2: 0 },
             "nl": { row: 1, cols: 1, multiplierX1: 0, multiplierX2: 0, width: 40, height: 20, multiplierY1: 0, multiplierY2: 0 },
@@ -227,7 +236,7 @@ class Component {
                     this.frame = this.frame < (this.images[this.type].row + this.images[this.type].cols - 2) ? this.frame + 1 : 0;
 
                 }
-                if (this.type == "a" && String(this.time / 200).indexOf(".") == -1 ) {
+                if (this.type == "a" && String(this.time / 250).indexOf(".") == -1 ) {
                     if(this.frame == 6){
                     var left = this.x > canvas.width / 2;
                     var right = this.x < canvas.width / 2;
@@ -283,6 +292,10 @@ class Game {
         var c = "c";
         var t = "t";
         var y = "y";
+        var l = "l";
+        var r = "lr";
+        var s = "s";
+
         this.objects = {
             thrown: []
         }
@@ -295,14 +308,14 @@ class Game {
             [
                 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [y, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, P, P],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, P, P],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, t, t, t],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, l, 0, 0],
+                [y, 0, 0, 0, 0, 0, 0, 0, 0, l, 0, 0],
+                [t, t, 0, 0, 0, 0, 0, 0, 0, l, 0, 0],
+                [g, g, 0, 0, 0, 0, 0, 0, 0, l, 0, 0],
+                [g, g, t, t, 0, 0, 0, 0, 0, t, t, t],
+                [g, g, g, g, 0, 0, 0, 0, 0, 0, 0, P],
+                [g, g, g, g, 0, 0, 0, 0, 0, 0, 0, 0],
                 [t, t, t, t, t, t, t, t, t, t, t, t],
                 [g, g, g, g, g, g, g, g, g, g, g, g]
 
@@ -313,41 +326,41 @@ class Game {
                 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [y, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, t, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, t, 0, 0, 0, 0, 0, P, P],
-                [0, 0, 0, t, g, t, 0, 0, 0, 0, P, P],
-                [t, t, t, g, g, g, t, t, t, t, t, t],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, P],
+                [y, 0, 0, 0, 0, 0, 0, 0, 0, 0, c, 0],
+                [t, t, 0, 0, 0, 0, 0, 0, 0, t, t, t],
+                [g, g, 0, 0, 0, 0, 0, t, 0, l, 0, 0],
+                [g, g, t, t, 0, 0, 0, 0, 0, l, 0, 0],
+                [g, g, g, g, t, 0, 0, 0, 0, l, 0, 0],
+                [g, g, g, g, g, t, 0, 0, 0, l, 0, 0],
+                [g, g, g, g, g, g, t, t, t, t, t, t],
                 [g, g, g, g, g, g, g, g, g, g, g, g]
             ],
             [
                 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, t, t, t, t, t],
                 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, g, 0, 0, 0, 0, 0, 0, 0, 0],
-                [y, 0, g, g, g, 0, 0, 0, 0, 0, 0, 0],
-                [0, g, g, g, g, g, g, g, g, g, g, 0],
-                [g, g, g, g, g, g, g, g, g, g, g, 0],
-                [g, g, 0, 0, g, g, g, g, g, g, 0, 0],
-                [g, g, 0, 0, 0, 0, g, g, g, 0, 0, 0],
-                [g, g, P, P, 0, 0, 0, 0, 0, 0, 0, 0],
-                [g, g, P, P, 0, c, 0, c, 0, c, 0, 0],
+                [y, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [t, t, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [g, g, r, r, r, t, t, t, t, t, t, 0],
+                [g, g, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [P, 0, 0, 0, c, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, s, s, 0, 0, 0, 0, 0, 0, 0],
                 [t, t, t, t, t, t, t, t, t, t, t, t]
             ],
             [
-                [0, 0, 0, 0, 0, g, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, g, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, g, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, g, 0, 0, 0, 0, 0, 0],
-                [y, 0, 0, 0, g, g, g, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, "m:-2:70:50", 0, 0, 0, P, P ],
-                [0, 0, 0, 0, g, g, g, g, 0, 0, P, P],
-                [0, 0, 0, g, g, g, g, g, g, 0, 0, 0],
-                [0, 0, g, g, g, g, g, g, g, g, 0, 0],
-                [0, g, g, g, g, g, g, g, g, g, g, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [y, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [t, t, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+                [g, g, 0, 0, t, t, 0, 0, t, t, 0, 0],
+                [g, g, r, r, g, g, r, r, g, g, 0, 0],
+                [0, 0, 0, c, 0, P, 0, 0, c, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                 [t, t, t, t, t, t, t, t, t, t, t, t],
                 [g, g, g, g, g, g, g, g, g, g, g, g]
             ],
@@ -356,8 +369,8 @@ class Game {
                 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "m:-1:70:50", 0],
-                [y, 0, 0, c, 0, 0, 0, 0, 0, P, P, 0],
-                [0, 0, 0, g, 0, 0, c, 0, 0, P, P, 0],
+                [y, 0, 0, c, 0, 0, 0, 0, 0, P, 0, 0],
+                [0, 0, 0, g, 0, 0, c, 0, 0, 0, 0, 0],
                 [0, 0, 0, 0, 0, 0, g, 0, 0, 0, 0, 0],
                 [0, 0, 0, c, 0, 0, 0, 0, 0, 0, 0, 0],
                 [0, 0, 0, g, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -400,6 +413,15 @@ class Game {
                     player.stats.y = canvas.height/ this.array[this.current.level].length;
                     game.objects.thrown = [];
                 }
+                if (player.collide(this.array[h][i][j]) && (this.array[h][i][j].type == "l" ||  this.array[h][i][j].type == "lr")) {
+                    player.health -= 1;
+                    if(this.array[h][i][j].fullType == "l")
+                    player.stats.x += player.left ? -100 : 100;
+                    else {
+                        player.stats.y += 200;
+                    }
+                }
+
                 if (player.collide(this.array[h][i][j]) && this.array[h][i][j].type == "m") {
                     this.array[h][i][j] = 0;
                     player.health -= 1;
@@ -437,7 +459,7 @@ class Game {
                         player.jump = false;
                         player.gravitySpeed = 0;
                         if (!(player.right || player.left))
-                            currentSprite = "ninMain";
+                            currentSprite = player.stats.right ? "ninMainRight" : "ninMainLeft";
 
                     }
                     else if (player.stats.y + player.stats.height < rocktop && rocktop - (player.stats.y + player.stats.height) < 6 / 5 * player.amount.y) {
@@ -529,8 +551,8 @@ class Game {
 
         if (player.throw) {
             player.throw = false;
-            var kind = player.right ? { type: "nr", direction: "positive" } :
-                player.left ? { type: "nl", direction: "negative" }
+            var kind = player.right || player.stats.right ? { type: "nr", direction: "positive" } :
+                player.left || player.stats.left ? { type: "nl", direction: "negative" }
                     : { type: "nr", direction: "positive" };
             var startingpoint = player.stats.x + (kind.type == "nr" ? 100 : kind.type == "nl" ? -100 : 100);
 
@@ -549,12 +571,21 @@ class Game {
                 player.stats.currentCol = 3;
             }
         }
-
+        if(player.stats.slow && player.stats.slowTime < 10000){
+            player.stats.slowTime += 10;
+        }
+        if(player.stats.slowTime >= 10000){
+            player.stats.slow = false;
+            player.stats.slowTime = 0;
+            player.amount.x = 3;
+        }
         time += 10;
         game.canvas();
         player.stats.y += player.gravitySpeed;
         player.gravitySpeed += player.gravitySpeed < 5 ? player.gravity: 0.02;
         player.draw();
+        ninjastars();
+
 
 
 
@@ -571,6 +602,8 @@ class Player {
         {
             x: x,
             y: y,
+            left: false,
+            right: true,
             width: width,
             height: height,
             shoot: false,
@@ -579,7 +612,9 @@ class Player {
             currentCollision: ["none", "none", "none"],
             spriteRow: 0,
             spriteCol: 0,
-            stars: []
+            stars: [],
+            slow: false,
+            slowTime: 0
         }
         this._health = 3;
         this._throw = false;
@@ -661,8 +696,14 @@ class Player {
     draw() {
 
         ctx.beginPath();
-        if (currentSprite == "ninMain") {
-            ctx.drawImage(ninMain,
+        if (currentSprite == "ninMainRight") {
+            ctx.drawImage(ninMainRight,
+                this.stats.x,
+                this.stats.y,
+                this.stats.width, this.stats.height);
+        }
+        if (currentSprite == "ninMainLeft") {
+            ctx.drawImage(ninMainLeft,
                 this.stats.x,
                 this.stats.y,
                 this.stats.width, this.stats.height);
@@ -730,11 +771,14 @@ class Player {
 
         if (event.key === "ArrowRight" || event.key == "d" || event.key == "D") {
             this.right = true;
+            this.stats.right = true;
+            this.stats.left = false;
 
         }
         if (event.key === "ArrowLeft" || event.key == "a" || event.key == "A") {
             this.left = true;
-
+            this.stats.right = false;
+            this.stats.left = true;
 
         }
         if (event.key == " ") {
@@ -743,7 +787,10 @@ class Player {
         }
 
         if ((event.key === "ArrowUp" || event.key == "w" || event.key == "W") && !this.jump) {
-            currentSprite = "ninMain";
+            if(player.stats.right)
+            currentSprite = "ninMainRight";
+            else if(player.stats.left)
+            currentSprite = "ninMainLeft";
             this.jump = true;
 
 
@@ -752,7 +799,7 @@ class Player {
 
     }
     moveReset(event) {
-        currentSprite = "ninMain";
+        currentSprite = player.stats.right ?"ninMainRight" : "ninMainLeft";
         if (event.key === "ArrowRight" || event.key == "d" || event.key == "D") {
             this.right = false;
 
@@ -877,6 +924,8 @@ setInterval(function()
 function start() {
     mainMusic.play();
     document.getElementsByClassName("bg-text")[0].style.display = "none";
+    document.getElementById("HEALTHINSIDE").style.display = "block";
+    document.getElementById("HEALTHSTRUCTURE").style.display = "block";
     document.addEventListener("keydown", function () {
 
         player.movement(event);
@@ -888,11 +937,11 @@ function start() {
 
     });
 
-    generator = setInterval(createLevels, 2000);
+    generator = setInterval(createLevels, 100);
     mainTime = setInterval(function () {
         game.draw();
     }, 10);
-    ninjastars = setInterval(function () {
+    ninjastars = function () {
         if (game.objects.thrown.length != 0) {
   
             for (var i = 0; i < game.objects.thrown.length; i++) {
@@ -916,9 +965,12 @@ function start() {
                 }
 
                 if (player.collide(game.objects.thrown[i])) {
+                    if((game.objects.thrown[i].type == "sl" || game.objects.thrown[i].type == "sr") && !player.stats.slow){
+                        player.amount.x  *= 2/3;
+                        player.stats.slow = true;
+                    }
                     player.health -= 1;
                     game.objects.thrown.splice(i, 1);
-                    player.amount.x *= 5/6;
                     continue;
 
                 }
@@ -933,7 +985,7 @@ function start() {
 
             }
         }
-    }, 10);
+    }
 }
 function restrart(){
     window.location.reload();
