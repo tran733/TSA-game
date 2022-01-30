@@ -18,10 +18,13 @@ const deviceType = () => {
     }
     return "desktop";
 }
+
 var mainTime;
 var ninjastars;
 var monsters;
 var generator;
+var elem = document.documentElement;
+elem.requestFullscreen();
 var test = false;
 localStorage.highScore = localStorage.highScore ? localStorage.highScore : 0;
 const canvas = document.getElementById("myCanvas");
@@ -347,8 +350,8 @@ class Game {
                 [g, g, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                 [P, 0, 0, 0, c, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, s, s, 0, 0, 0, 0, 0, 0, 0],
-                [t, t, t, t, t, t, t, t, t, t, t, t]
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [t, t, t, s, s, s, t, t, t, t, t, t]
             ],
             [
                 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -585,7 +588,7 @@ class Game {
         player.gravitySpeed += player.gravitySpeed < 5 ? player.gravity: 0.02;
         player.draw();
         ninjastars();
-
+     
 
 
 
@@ -921,6 +924,7 @@ setInterval(function()
 
 //Wait for next step in the loop
 }, 100);*/
+
 function start() {
     mainMusic.play();
     document.getElementsByClassName("bg-text")[0].style.display = "none";
@@ -931,6 +935,7 @@ function start() {
         player.movement(event);
 
     });
+
     document.addEventListener("keyup", function () {
 
         player.moveReset(event);
