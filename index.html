@@ -12,6 +12,9 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <title>Ninja Platformer</title>
     <link rel="icon" type="image/png" href="favicon.png" />
+    <link rel="stylesheet" href="overlay.css" />
+    <link rel="stylesheet" href="slider.css" />
+
     <style>
         @font-face {
             font-family: 'pixel';
@@ -21,7 +24,7 @@
         .black {
             background-color: black;
             color: white;
-            font-family: pixel;
+            font-family: 'pixel';
             border: 4px solid black;
             position: fixed;
             top: 50%;
@@ -57,6 +60,10 @@
 
         }
 
+        .black {
+            display: none;
+        }
+
         #right {
             right: 5%;
             bottom: 20%;
@@ -72,15 +79,17 @@
             right: 10%;
             bottom: 30%;
         }
+
         #GAMEOVER {
             position: absolute;
             width: 35%;
             height: 25%;
             top: 10%;
             left: 30%;
-            display:none;
+            display: none;
 
         }
+
         #HEALTHSTRUCTURE {
             position: absolute;
             width: 20%;
@@ -88,10 +97,11 @@
             top: 0%;
             left: 0%;
             z-index: 3;
-            display:none;
+            display: none;
 
         }
-        #HEALTHINSIDE{
+
+        #HEALTHINSIDE {
             position: absolute;
             width: 11.3%;
             height: 3%;
@@ -100,6 +110,7 @@
             z-index: 3;
             display: none;
         }
+
         #RETRY {
             position: absolute;
             width: 15%;
@@ -111,31 +122,125 @@
             transition: width 1s, height 1s, top 1s, left 1s;
 
         }
-        #RETRY:hover{
+
+        #RETRY:hover {
             width: 20%;
             height: 20%;
             left: 40%;
             top: 40%;
         }
+
         .bg-text {
-            background-color: rgb(0, 0, 0);
+            background-color: rgb(0, 0, 0, 0);
             /* Fallback color */
-            background-color: rgba(0, 0, 0, 0.4);
-            /* Black w/opacity/see-through */
             color: white;
             font-weight: bold;
             font-family: 'pixel';
-            font-size: 120px;
+            font-size: 80px;
             border: 10px solid #f1f1f1;
             position: fixed;
-            top: 50%;
-            left: 50%;
+            top: 25%;
+            left: 80%;
             transform: translate(-50%, -50%);
             z-index: 2;
-            width: 325px;
-            padding: 20px;
+            width: 15%;
+            height: 30%;
+            padding: 25px;
             text-align: center;
             display: none;
+            transition: width 1s, height 1s, font-size 1s;
+            cursor: pointer;
+        }
+
+        .bg-text:hover {
+            width: 20%;
+            height: 40%;
+            font-size: 95px;
+        }
+
+        #gear {
+            width: 5%;
+            height: 11%;
+            position: absolute;
+            top: 0%;
+            left: 93%;
+            z-index: 2;
+            transition: transform 2s;
+        }
+
+        #gear:hover {
+            transform: rotate(180deg);
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+            font-family: 'pixel';
+            vertical-align: -150%;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #E3242B;
+            -webkit-transition: .4s;
+            transition: .4s;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            -webkit-transition: .4s;
+            transition: .4s;
+        }
+
+        input:checked+.slider {
+            background-color: rgb(49, 184, 49);
+        }
+
+        input:focus+.slider {
+            box-shadow: 0 0 1px #2196F3;
+        }
+
+        input:checked+.slider:before {
+            -webkit-transform: translateX(26px);
+            -ms-transform: translateX(26px);
+            transform: translateX(26px);
+        }
+
+        /* Rounded sliders */
+        .slider.round {
+            border-radius: 34px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+        h1 {
+            position: absolute;
+            top: 60%;
+            left: 40%;
+            color: white;
+            font-size: 350%;
+            font-family: 'pixel';
         }
     </style>
     <noscript>
@@ -144,25 +249,57 @@
     </noscript>
 </head>
 
-<body>
-
+<body onclick="startLoad();">
+    <div id="start">
+        <h1>
+            Click to Start
+        </h1>
+        <img src="logo.png" style="position: absolute;top: -10%; left: 32.5%;">
+    </div>
     <div class="black">
-        <span id = "loading" style = "font-size: 30px;">Loading</span>
+        <span id="loading" style="font-size: 30px;">Loading</span>
         <div id="myBar" class="w3-white" style="height:36px;width:0%; font-family: pixel; padding-left: 5px;">0</div>
     </div>
-    <button class="bg-text" onclick="start()">START</button>
+    <div id="myNav" class="overlay">
+        <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+        <div style="font-family: 'pixel'; ">
+            <div id="myUL" style="z-index: 6; margin-top: 5%;">
+                <div id="music" style="margin-bottom: 5%;">
+                    <div style="float: left">
+                        <a style="font-size: 50px;">Music:</a>
+                    </div>
+                    <label class="switch" onmouseup="turnoffMusic()"><input type="checkbox" checked><span
+                            class="slider round"></span></label>
+                </div>
+                <div id="volume" style="margin-bottom: 5%;">
+                    <div class="slidecontainer">
+                        <div style="float: left">
+                            <a style="font-size: 50px;">Music Volume:</a>
+                        </div>
+                        <input onchange = "volumeChange()" type ="range" min="1" max="100" value="50" class="sliderRange" id="myRange">
+                    </div>
+                </div>
 
-    <audio id="mainMusic" loop="loop">
-        <source src="mainMusic.mp3" type="audio/mp3">
+            </div>
+        </div>
+    </div>
+
+    <button class="bg-text" onclick="start()">PLAY</button>
+    <audio id="mainMenu" loop="loop">
+        <source src="MainMenu.mp3" type="audio/mp3">
         </source>
     </audio>
-    <image src = "Healthstructure.png" id = "HEALTHSTRUCTURE"></image>
-    <image src = "Healthinside.png" id = "HEALTHINSIDE"></image>
-
-    <image src="scenery level 1.png" id="clouds" style="position: absolute; display: none;"></image>
+    <audio id="mainMusic" loop="loop">
+        <source src="mainMusic.wav" type="audio/wav">
+        </source>
+    </audio>
+    <image src="gear.png" id="gear" style="display: none;" onclick="openNav()"></image>
+    <image src="Healthstructure.png" id="HEALTHSTRUCTURE"></image>
+    <image src="Healthinside.png" id="HEALTHINSIDE"></image>
+    <image src="BlossomImage.gif" id="clouds" style="position: absolute; display: none;"></image>
     <image src="GameoverScreen.png" id="gameover" style="position: absolute; display: none;"></image>
-    <image src="Gameover.png" id = "GAMEOVER"></image>
-    <image src="retry.png" id = "RETRY" onclick = "restrart();"></image>
+    <image src="Gameover.png" id="GAMEOVER"></image>
+    <image src="retry.png" id="RETRY" onclick="restrart();"></image>
 
     <canvas id="myCanvas"></canvas>
     <div id="gameBtns">
@@ -175,7 +312,47 @@
     </div>
     <script src="main.js"></script>
     <script>
+        var range = Number(document.getElementById("myRange").value);
+        localStorage.music = localStorage.music ? localStorage.music : 'true';
+        localStorage.volume = localStorage.volume ? localStorage.volume : range / 100;
+        document.getElementById("myRange").value = Number(localStorage.volume);
+        var startload = false;
         localStorage.playedBefore = localStorage.playedBefore == 'true' ? localStorage.playedBefore : 'false';
+        function showSettings() {
+            //
+        }
+        function volumeChange() {
+            localStorage.volume = Number(document.getElementById("myRange").value) / 100;
+            document.getElementById("mainMenu").volume = Number(localStorage.volume);
+            document.getElementById("mainMusic").volume = Number(localStorage.volume);
+
+        }
+        function turnoffMusic() {
+            localStorage.music = localStorage.music == 'false' ? 'true' : 'false';
+            if (localStorage.music == 'false') {
+                document.getElementById("mainMenu").pause();
+                document.getElementById("mainMusic").pause();
+            }
+            else if (localStorage.music == "true") {
+                if (gamestarted) {
+                    document.getElementById("mainMusic").volume = Number(localStorage.volume);
+
+                    document.getElementById("mainMusic").play();
+                }
+                else {
+                    document.getElementById("mainMenu").volume = Number(localStorage.volume);
+                    document.getElementById("mainMenu").play();
+                }
+            }
+        }
+        function startLoad() {
+            if (!startload) {
+                document.getElementById('start').style.display = 'none';
+                document.getElementsByClassName('black')[0].style.display = "block";
+                move();
+                startload = true;
+            }
+        }
         function move() {
             var elem = document.getElementById("myBar");
             var width = 0;
@@ -188,13 +365,18 @@
                     document.getElementById("clouds").style.display = "block";
                     document.getElementsByClassName("bg-text")[0].style.display = "block";
                     document.getElementsByClassName("black")[0].style.display = 'none';
+                    document.getElementById("gear").style.display = "block";
+                    document.getElementById("myBar").style.display = "block";
+                    if (localStorage.music == "true")
+                        document.getElementById("mainMenu").play();
+
 
                 } else {
                     width += localStorage.playedBefore == "false" ? 0.1 : 1;
                     elem.style.width = width + '%';
                     elem.innerHTML = (width * 1).toFixed(localStorage.playedBefore == "false" ? 1 : 0) + '%';
-                    if(loading.innerText.lastIndexOf(".") - loading.innerText.indexOf(".") < 3 && String((width * 1).toFixed(localStorage.playedBefore == "false" ? 1 : 0)).indexOf(".") == -1){
-                        loading.innerText+=".";
+                    if (loading.innerText.lastIndexOf(".") - loading.innerText.indexOf(".") < 3 && String((width * 1).toFixed(localStorage.playedBefore == "false" ? 1 : 0)).indexOf(".") == -1) {
+                        loading.innerText += ".";
                     }
                     else {
                         loading.innerText = "loading";
@@ -204,8 +386,13 @@
             }
 
         }
-        move();
+        function openNav() {
+            document.getElementById("myNav").style.width = "100%";
+        }
 
+        function closeNav() {
+            document.getElementById("myNav").style.width = "0%";
+        }
     </script>
 </body>
 
