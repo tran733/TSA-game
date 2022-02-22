@@ -147,7 +147,8 @@ const BottomMiddleElectric = new Image();
 BottomMiddleElectric.src = "BottomMiddleElectric.png";
 const BottomLeftElectric = new Image();
 BottomLeftElectric.src = "BottomLeftElectric.png";
-
+const tree = new Image();
+tree.src = "tree.png";
 var currentSprite = "ninMainRight";
 var time = 0;
 function whichSprite() {
@@ -239,6 +240,7 @@ class Component {
             "c": "coin.png",
             "t": "platform.png",
             "nl": "starleft.png",
+            "x": "tree.png",
             "!": "TopLeftSwamp.png",
             "@": "TopMiddleSwamp.png",
             "#": "TopRightSwamp.png",
@@ -290,6 +292,7 @@ class Component {
             "s": { row: 1, cols: 1, multiplierX1: 0, multiplierX2: 0, width: this.width, height: this.height / 1.5, multiplierY1: 0, multiplierY2: 0 },
             "rs": { row: 1, cols: 6, multiplierX1: 0, multiplierX2: 0, width: this.width, height: 2 * this.height, multiplierY1: 0, multiplierY2: 0 },
             "r": { row: 1, cols: 6, multiplierX1: 0.13, multiplierX2: 0.275, width: this.width, height: 2 * this.height, multiplierY1: 0.1, multiplierY2: 0.2 },
+            "x": { row: 1, cols: 1, multiplierX1: 0, multiplierX2: 0, width: this.width, height: 2 * this.height, multiplierY1: 0, multiplierY2: 0 },
             "n": { row: 1, cols: 6, multiplierX1: 0.13, multiplierX2: 0.275, width: this.width, height: 2 * this.height, multiplierY1: 0.1, multiplierY2: 0.2 },
             "ns": { row: 1, cols: 6, multiplierX1: 0.13, multiplierX2: 0.275, width: this.width, height: 2 * this.height, multiplierY1: 0.1, multiplierY2: 0.2 },
             "P": { row: 1, cols: 4, multiplierX1: 0, multiplierX2: 0, width: this.width, height: 2 * this.height, multiplierY1: 0, multiplierY2: 0 },
@@ -373,6 +376,9 @@ class Component {
 
                 case "n":
                     this.image = bigSmallMushroom;
+                    break;
+                case "x":
+                    this.image = tree;
                     break;
                 case "rs":
                     this.image = mushroomSpring;
@@ -613,6 +619,7 @@ class Game {
         var e = "e";
         var u = "u";
         var v = "v";
+        var q = "x";
         this.objects = {
             thrown: [],
             turnoff: "",
@@ -634,7 +641,7 @@ class Game {
                 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                 [y, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, P],
+                [0, q, 0, 0, 0, 0, 0, 0, 0, 0, 0, P],
                 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                 [t, t, t, t, t, t, t, t, t, t, t, t],
                 [g, g, g, g, g, g, g, g, g, g, g, g]
@@ -988,7 +995,6 @@ class Game {
                         player.stats.y = rockbottom;
                         player.jump = false;
                         if ((this.array[h][i][j].type == "r" || this.array[h][i][j].type == "n")) {
-                            player.gravitySpeed = -(0.3 * player.amount.y);
                             player.jump = true;
                             if (this.array[h][i][j].type == "r") {
                                 this.array[h][i][j].image = mushroomSpring;
@@ -999,7 +1005,7 @@ class Game {
 
                         }
                         else {
-                            player.gravitySpeed = 0;
+                            player.gravitySpeed = -0.1;
                         }
                         if (!(player.right || player.left))
                             currentSprite = player.stats.right ? "ninMainRight" : "ninMainLeft";
@@ -1010,7 +1016,7 @@ class Game {
                         player.gravitySpeed *= 1.5;
                     }
                     else {
-                        player.gravitySpeed = 0;
+                        player.gravitySpeed = -0;
                         if (player.stats.x > this.array[h][i][j].x) {
                             player.stats.x = this.array[h][i][j].x + this.array[h][i][j].width;
                             player.left = false;
