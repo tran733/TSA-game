@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml">
 
@@ -89,25 +89,24 @@
             display: none;
 
         }
-
         #HEALTHSTRUCTURE {
             position: absolute;
-            width: 20%;
+            width: 23%;
             height: 15%;
-            top: 0%;
+            top: 5%;
             left: 0%;
-            z-index: 3;
+            z-index: 5;
             display: none;
 
         }
 
         #HEALTHINSIDE {
             position: absolute;
-            width: 11.3%;
-            height: 3%;
-            top: 9%;
-            left: 8.1%;
-            z-index: 3;
+            width: 15%;
+            height: 1.75%;
+            top: 11.5%;
+            left: 7.5%;
+            z-index: 5;
             display: none;
         }
 
@@ -268,17 +267,19 @@
                     <div style="float: left">
                         <a style="font-size: 50px;">Music:</a>
                     </div>
-                    <label class="switch" onmouseup="turnoffMusic()"><input type="checkbox" checked><span
+                    <label class="switch" onmouseup="turnoffMusic()"><input type="checkbox" id = "check" checked><span
                             class="slider round"></span></label>
                 </div>
                 <div id="volume" style="margin-bottom: 5%;">
                     <div class="slidecontainer">
                         <div style="float: left">
-                            <a style="font-size: 50px;">Music Volume:</a>
+                            <a style="font-size: 50px;">Volume:</a>
                         </div>
-                        <input onchange = "volumeChange()" type ="range" min="1" max="100" value="50" class="sliderRange" id="myRange">
+                        <input oninput = "volumeChange()" type ="range" min="1" max="100" value="50" class="sliderRange" id="myRange">
                     </div>
                 </div>
+                <image src="keys.png" id="keys" style = "width: 50%; height: 50%;"></image>
+
 
             </div>
         </div>
@@ -299,6 +300,7 @@
     <image src="BlossomImage.gif" id="clouds" style="position: absolute; display: none;"></image>
     <image src="GameoverScreen.png" id="gameover" style="position: absolute; display: none;"></image>
     <image src="Gameover.png" id="GAMEOVER"></image>
+    
     <image src="retry.png" id="RETRY" onclick="restrart();"></image>
 
     <canvas id="myCanvas"></canvas>
@@ -312,10 +314,20 @@
     </div>
     <script src="main.js"></script>
     <script>
+        localStorage.music = localStorage.music ? localStorage.music : 'true';
+        localStorage.volume = localStorage.volume ? localStorage.volume : range / 100;
+        (function(){
+            if(localStorage.music == "true"){
+                document.getElementById("check").checked = true;
+            }
+            else if(localStorage.music == "false"){
+                document.getElementById("check").checked = false;
+            }
+            document.getElementById("myRange").value =  Number(localStorage.volume) * 100;
+        })();
         var range = Number(document.getElementById("myRange").value);
         localStorage.music = localStorage.music ? localStorage.music : 'true';
         localStorage.volume = localStorage.volume ? localStorage.volume : range / 100;
-        document.getElementById("myRange").value = Number(localStorage.volume);
         var startload = false;
         localStorage.playedBefore = localStorage.playedBefore == 'true' ? localStorage.playedBefore : 'false';
         function showSettings() {
