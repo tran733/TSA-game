@@ -18,7 +18,9 @@ const deviceType = () => {
     }
     return "desktop";
 }
-
+if(localStorage.volume == "NaN"){
+   localStorage.volume = 0.5
+}
 var mainTime;
 var ninjastars;
 var monsters;
@@ -189,6 +191,10 @@ const attackFinal = new Image();
 attackFinal.src = "attackFinal.png";
 const bottomAttackFinal = new Image();
 bottomAttackFinal.src = "bottomAttackFinal.png";
+const electricBackground = new Image();
+electricBackground.src = "electric.png";
+const finalPortal = new Image();
+finalPortal.src = "portalEnd.png";
 var currentSprite = "ninMainRight";
 var time = 0;
 function whichSprite() {
@@ -291,6 +297,7 @@ class Component {
             "c": "coin.png",
             "/": "pipeTop.png",
             "|": "pipeLeft.png",
+            "el" : "electric.png",
             "%": "ballHorizontalElectric.png",
             "^": "attackHorizontalElectric.png",
             "&": "attackFinal.png",
@@ -329,6 +336,7 @@ class Component {
         this.images = {
             "[": { row: 1, cols: 1, multiplierX1: 0, multiplierX2: 0, width: this.width, height: this.height, multiplierY1: 0, multiplierY2: 0 },
             "sw": { row: 1, cols: 10, multiplierX1: 0, multiplierX2: 0, width: this.width, height: this.height, multiplierY1: 0, multiplierY2: 0 },
+            "el": { row: 1, cols: 10, multiplierX1: 0, multiplierX2: 0, width: this.width, height: this.height, multiplierY1: 0, multiplierY2: 0 },
             "c": { row: 1, cols: 3, multiplierX1: 0.3, multiplierX2: 0.6, width: 50, height: this.height, multiplierY1: 0.1, multiplierY2: 0.25 },
             "1": { row: 1, cols: 1, multiplierX1: 0, multiplierX2: 0, width: this.width, height: this.height * 2, multiplierY1: 0, multiplierY2: 0 },
             "a": { row: 1, cols: 10, multiplierX1: 0, multiplierX2: 0, width: 70, height: 1.15 * this.height, multiplierY1: 0.06, multiplierY2: 0 },
@@ -542,7 +550,9 @@ class Component {
                     break;
                 case "sw":
                     this.image = SwampImg;
-
+                    break;
+                case "el":
+                    this.image = electricBackground;
             }
         }
         this.time = 0;
@@ -641,6 +651,12 @@ class Component {
                             this.images[this.type].cols = 1;
                             this.images[this.type].frame = 0;
                     }
+                }
+                if(game.current.level == 28){
+                   this.image = finalPortal;
+                   this.images[this.type].cols = 5;
+                   this.images[this.type].frame = 0;
+
                 }
                 if (this.type == "d") {
                     if (this.frame == 12) {
@@ -1550,8 +1566,11 @@ class Game {
         if (test) {
             player.health = Infinity;
         }
-        layer.draw();
-
+        if(this.level < 15)
+          layer.draw();
+        else {
+          layer2.draw();
+        }
         if (player.right && !player.stats.noright && player.stats.x + player.stats.width + player.amount.x < canvas.width) {
             player.stats.x += player.amount.x;
             player.stats.noleft = false;
@@ -1888,7 +1907,7 @@ const game = new Game();
 const player = new Player(100, 150, canvas.width / 26, canvas.height / 13, "yellow");
 const coin = new Component(canvas.width / 9, -10, 40, 60, "c");
 var layer = new Component(0, 0, canvas.width, canvas.height, "sw", "", 0, "sw");
-
+var layer2 = new Component(0, 0, canvas.width, canvas.height, "el", "", 0, "el");
 function createLevels() {
     var currentArray = [
     ];
@@ -2014,13 +2033,9 @@ function start() {
 
     });
 
-    generator = setInterval(createLevels, 100);
+   // generator = setInterval(createLevels, 100);
     mainTime = setInterval(function () {
         game.draw();
-        if(game.current.level == 35){
-            game.win();
-        }
-
     }, 10);
     ninjastars = function () {
         if (game.objects.thrown.length != 0) {
