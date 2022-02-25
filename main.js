@@ -136,7 +136,7 @@ TopMiddleElectric.src = "TopMiddleElectric.png";
 const TopRightElectric = new Image();
 TopRightElectric.src = "TopRightElectric.png";
 const MiddleLeftElectric = new Image();
-MiddleLeftElectric.src = "MiddleLeftElectric.png";
+MiddleLeftElectric.src = "MiddleLeftEletric.png";
 const MiddleMiddleElectric = new Image();
 MiddleMiddleElectric.src = "MiddleMiddleElectric.png";
 const MiddleRightElectric = new Image();
@@ -149,6 +149,46 @@ const BottomLeftElectric = new Image();
 BottomLeftElectric.src = "BottomLeftElectric.png";
 const tree = new Image();
 tree.src = "tree.png";
+const swampWaterTop = new Image();
+swampWaterTop.src = "swampWaterTop.png";
+const swampWaterBottom = new Image();
+swampWaterBottom.src = "swampWaterBottom.png";
+const vines = new Image();
+vines.src = "vines.png";
+const platformSwamp = new Image();
+platformSwamp.src = "platformSwamp.png";
+const platformElectric = new Image();
+platformElectric.src = "platformElectric.png";
+const pipeLeft = new Image();
+pipeLeft.src = "pipeLeft.png";
+const pipeTop = new Image();
+pipeTop.src = "pipeTop.png";
+const crate = new Image();
+crate.src = "crateElectric.png";
+const warehouse = new Image();
+warehouse.src = "warehouse.png";
+const elematrix = new Image();
+elematrix.src = "Elematrix.png";
+const neoElematrix = new Image();
+neoElematrix.src = "neoElemtrix.png";
+const ballHorizontalAttack = new Image();
+ballHorizontalAttack.src = "ballHorizontalElectric.png";
+const attackHorizontalElectric = new Image();
+attackHorizontalElectric.src = "attackHorizontalElectric.png";
+const elematrixFinalAttack = new Image();
+elematrixFinalAttack.src = "elematrixFinalAttack.png";
+const elematrixRoll = new Image();
+elematrixRoll.src = "elematrixRoll.png";
+const elematrixSuperRun = new Image();
+elematrixSuperRun.src = "elematrixSuperRun.png";
+const tiredElematrix = new Image();
+tiredElematrix.src = "tiredElematrix.png";
+const elematrixSuperSonic = new Image();
+elematrixSuperSonic.src = "elematrixSuperSonic.png";
+const attackFinal = new Image();
+attackFinal.src = "attackFinal.png";
+const bottomAttackFinal = new Image();
+bottomAttackFinal.src = "bottomAttackFinal.png";
 var currentSprite = "ninMainRight";
 var time = 0;
 function whichSprite() {
@@ -226,21 +266,40 @@ class Component {
         if (type == "s") {
             this.y += this.height / 2;
         }
+        if (type == "[") {
+            this.width = this.height;
+        }
+        if (type == "]") {
+            this.width *= 2;
+            this.height *= 2;
+        }
         this.types = {
             g: "#1c5200",
             "0": "none",
             p: "pink",
             y: "yellow",
-            v: "#607D3B",
+            v: "swampWaterTop.png",
+            ",": "swampWaterBottom.png",
+            ".": "vines.png",
+            "[": "crate.png",
+            "]": "warehouse.png",
             l: this.fullType == "lr" ? "laser-right.png" : "laser-up.png",
             "2": this.fullType == "2l" ? "crlaser-right.png" : "crlaser-up.png",
             "3": this.fullType == "3l" ? "cplaser-right.png" : "cplaser-up.png",
             "4": this.fullType == "4l" ? "cblaser-right.png" : "cblaser-up.png",
             "P": "swampPortal.png",
             "c": "coin.png",
+            "/": "pipeTop.png",
+            "|": "pipeLeft.png",
+            "%": "ballHorizontalElectric.png",
+            "^": "attackHorizontalElectric.png",
+            "&": "attackFinal.png",
+            "=": "BottomAttackFinal.png",
             "t": "platform.png",
+            "-": "platformSwamp.png",
             "nl": "starleft.png",
             "x": "tree.png",
+            "1": "elematrix.png",
             "!": "TopLeftSwamp.png",
             "@": "TopMiddleSwamp.png",
             "#": "TopRightSwamp.png",
@@ -268,12 +327,25 @@ class Component {
             "m": Math.sign(moveAmount) == "-1" ? "slimeleft.png" : "slimeright.png"
         }
         this.images = {
+            "[": { row: 1, cols: 1, multiplierX1: 0, multiplierX2: 0, width: this.width, height: this.height, multiplierY1: 0, multiplierY2: 0 },
             "sw": { row: 1, cols: 10, multiplierX1: 0, multiplierX2: 0, width: this.width, height: this.height, multiplierY1: 0, multiplierY2: 0 },
             "c": { row: 1, cols: 3, multiplierX1: 0.3, multiplierX2: 0.6, width: 50, height: this.height, multiplierY1: 0.1, multiplierY2: 0.25 },
+            "1": { row: 1, cols: 1, multiplierX1: 0, multiplierX2: 0, width: this.width, height: this.height * 2, multiplierY1: 0, multiplierY2: 0 },
             "a": { row: 1, cols: 10, multiplierX1: 0, multiplierX2: 0, width: 70, height: 1.15 * this.height, multiplierY1: 0.06, multiplierY2: 0 },
+            "-": { row: 1, cols: 1, multiplierX1: 0, multiplierX2: 0, width: this.width, height: this.height, multiplierY1: 0, multiplierY2: 0 },
+            "/": { row: 1, cols: 1, multiplierX1: 0, multiplierX2: 0, width: this.width, height: this.height, multiplierY1: 0, multiplierY2: 0 },
+            "|": { row: 1, cols: 1, multiplierX1: 0, multiplierX2: 0, width: this.width, height: this.height, multiplierY1: 0, multiplierY2: 0 },
+            "]": { row: 1, cols: 1, multiplierX1: 0, multiplierX2: 0, width: this.width, height: this.height, multiplierY1: 0, multiplierY2: 0 },
             "!": { row: 1, cols: 1, multiplierX1: 0, multiplierX2: 0, width: this.width, height: this.height, multiplierY1: 0, multiplierY2: 0 },
+            "%": { row: 1, cols: 11, multiplierX1: 0, multiplierX2: 0, width: this.width, height: this.height, multiplierY1: 0, multiplierY2: 0 },
+            "^": { row: 1, cols: 3, multiplierX1: 0, multiplierX2: 0, width: this.width, height: this.height, multiplierY1: 0, multiplierY2: 0 },
+            "&": { row: 1, cols: 3, multiplierX1: 0, multiplierX2: 0, width: this.width, height: this.height, multiplierY1: 0, multiplierY2: 0 },
+            "=": { row: 1, cols: 17, multiplierX1: 0, multiplierX2: 0, width: this.width, height: this.height, multiplierY1: 0, multiplierY2: 0 },
             "@": { row: 1, cols: 1, multiplierX1: 0, multiplierX2: 0, width: this.width, height: this.height, multiplierY1: 0, multiplierY2: 0 },
             "#": { row: 1, cols: 1, multiplierX1: 0, multiplierX2: 0, width: this.width, height: this.height, multiplierY1: 0, multiplierY2: 0 },
+            "v": { row: 1, cols: 32, multiplierX1: 0, multiplierX2: 0, width: this.width, height: this.height, multiplierY1: 0, multiplierY2: 0 },
+            ".": { row: 1, cols: 1, multiplierX1: 0, multiplierX2: 0, width: this.width, height: this.height, multiplierY1: 0, multiplierY2: 0 },
+            ",": { row: 1, cols: 1, multiplierX1: 0, multiplierX2: 0, width: this.width, height: this.height, multiplierY1: 0, multiplierY2: 0 },
             "$": { row: 1, cols: 1, multiplierX1: 0, multiplierX2: 0, width: this.width, height: this.height, multiplierY1: 0, multiplierY2: 0 },
             "*": { row: 1, cols: 1, multiplierX1: 0, multiplierX2: 0, width: this.width, height: this.height, multiplierY1: 0, multiplierY2: 0 },
             "(": { row: 1, cols: 1, multiplierX1: 0, multiplierX2: 0, width: this.width, height: this.height, multiplierY1: 0, multiplierY2: 0 },
@@ -429,6 +501,45 @@ class Component {
                 case "$":
                     this.image = BottomMiddleSwamp;
                     break;
+                case "v":
+                    this.image = swampWaterTop;
+                    break;
+                case ",":
+                    this.image = swampWaterBottom;
+                    break;
+                case ".":
+                    this.image = vines;
+                    break;
+                case "-":
+                    this.image = platformSwamp;
+                    break;
+                case "/":
+                    this.image = pipeTop;
+                    break;
+                case "|":
+                    this.image = pipeLeft;
+                    break;
+                case "[":
+                    this.image = crate;
+                    break;
+                case "]":
+                    this.image = warehouse;
+                    break;
+                case "%":
+                    this.image = ballHorizontalAttack;
+                    break;
+                case "^":
+                    this.image = attackHorizontalElectric;
+                    break;
+                case "&":
+                    this.image = attackFinal;
+                    break;
+                case "=":
+                    this.image = bottomAttackFinal;
+                    break;
+                case "1":
+                    this.image = elematrix;
+                    break;
                 case "sw":
                     this.image = SwampImg;
 
@@ -467,6 +578,7 @@ class Component {
         this._image = value;
     }
 
+
     collide(value) {
         if (value.x < this.x + this.width &&
             value.x + value.width > this.x &&
@@ -498,8 +610,8 @@ class Component {
                     this.frame = this.frame < (this.images[this.type].row + this.images[this.type].cols - 2) ? this.frame + 1 : 0;
 
                 }
-                if(game.current.stage == "electric"){
-                    switch(this.type){
+                if (game.current.stage == "electric") {
+                    switch (this.type) {
                         case "!":
                             this.image = TopLeftElectric;
                             break;
@@ -521,9 +633,13 @@ class Component {
                         case "$":
                             this.image = BottomMiddleElectric;
                             break;
+                        case "-":
+                            this.image = platformElectric;
+                            break;
                         case "P":
                             this.image = electricPortal;
-                            this.images[this.type].col = 1;
+                            this.images[this.type].cols = 1;
+                            this.images[this.type].frame = 0;
                     }
                 }
                 if (this.type == "d") {
@@ -603,7 +719,7 @@ class Game {
         var d = ")";
         var y = "y";
         var l = "l";
-        var r = "lr";
+        var r = "r";
         var x = "2";
         var X = "2l";
         var w = "3";
@@ -619,7 +735,14 @@ class Game {
         var e = "e";
         var u = "u";
         var v = "v";
+        var s1 = ",";
         var q = "x";
+        var i = ".";
+        var h = "/";
+        var h1 = "|";
+        var l2 = "-";
+        var c1 = "[";
+        var w1 = "]";
         this.objects = {
             thrown: [],
             turnoff: "",
@@ -632,222 +755,558 @@ class Game {
             stage: "swamp"
         };
         this.array = [
-            [
-                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [y, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, q, 0, 0, 0, 0, 0, 0, 0, 0, 0, P],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [t, t, t, t, t, t, t, t, t, t, t, t],
-                [g, g, g, g, g, g, g, g, g, g, g, g]
-            ],
-            [
-                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [y, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, p, t, t, f, 0, 0, 0],
-                [t, f, 0, 0, 0, 0, j, d, 0, 0, 0, P],
-                [o, d, 0, 0, 0, 0, j, d, 0, 0, 0, 0],
-                [o, o, t, f, 0, 0, j, d, 0, 0, p, t],
-                [o, o, o, d, 0, 0, j, d, 0, 0, j, g],
-                [t, t, t, t, t, t, t, t, t, t, t, t],
-                [g, g, g, g, g, g, g, g, g, g, g, g]
 
-            ],
             [
-                [0, 0, 0, g, g, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, g, g, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, g, g, 0, 0, 0, 0, 0, c, 0],
-                [0, 0, 0, g, g, 0, 0, 0, 0, 0, 0, 0],
-                [y, g, 0, g, g, 0, 0, 0, 0, g, g, g],
-                [g, g, 0, g, g, 0, 0, 0, 0, 0, 0, 0],
-                [g, g, 0, 0, 0, 0, g, g, 0, 0, 0, 0],
-                [g, g, 0, 0, 0, 0, g, g, 0, 0, 0, 0],
-                [g, g, 0, 0, g, g, g, g, 0, 0, 0, P],
-                [g, g, 0, 0, g, g, g, g, 0, 0, 0, 0],
-                [g, g, g, g, g, g, g, g, g, g, g, g],
-                [g, g, g, g, g, g, g, g, g, g, g, g]
-
-            ],
-            [
-                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, P],
-                [0, 0, 0, "m:8:50:50", 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, g, g, g, g, g, g, g, g, g],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [y, "m:6:50:50", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [g, g, g, g, g, g, g, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, g, g],
-                ["m:9:50:50", 0, 0, 0, 0, 0, 0, 0, 0, 0, g, g],
-                [g, g, g, g, g, g, g, g, g, g, g, g],
-                [g, g, g, g, g, g, g, g, g, g, g, g]
-            ],
-            [
-                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, g, g, g, 0, 0],
-                [y, 0, 0, 0, g, 0, 0, g, g, g, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, g, g, g, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, g, g, g, 0, 0],
-                [0, 0, 0, 0, g, 0, 0, g, g, g, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, g, g, g, 0, P],
-                [0, 0, 0, 0, 0, 0, 0, g, g, g, 0, 0],
-                [g, g, g, g, g, g, g, g, g, g, g, g],
-                [g, g, g, g, g, g, g, g, g, g, g, g]
-            ],
-            [
-                [0, 0, 0, l, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, l, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, l, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, l, P, 0, 0, 0, 0, 0, 0, 0],
-                [y, 0, 0, l, 0, 0, 0, 0, 0, 0, 0, 0],
-                [t, 0, 0, t, t, t, t, t, 0, 0, 0, 0],
-                [g, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [g, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [g, 0, 0, 0, 0, 0, 0, 0, t, t, 0, 0],
-                [g, 0, 0, 0, 0, 0, 0, 0, g, g, 0, 0],
-                [t, t, t, t, t, t, t, t, g, g, t, t],
-                [g, g, g, g, g, g, g, g, g, g, g, g]
-            ],
-            [
-                [0, 0, 0, 0, 0, 0, l, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, l, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, l, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, l, 0, 0, 0, 0, 0],
-                [y, 0, 0, 0, 0, 0, l, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, w, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, w, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, w, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, w, 0, 0, 0, 0, P],
-                [0, 0, 0, 0, k, 0, w, 0, 0, 0, 0, 0],
-                [g, g, g, g, g, g, g, g, g, g, g, g],
-                [g, g, g, g, g, g, g, g, g, g, g, g]
-
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, q, 0, 0, 0, l2, l2, l2, 0, 0, 0, 0, 0],
+                [y, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, P],
+                [q, q, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, l2, l2],
+                [p, t, t, t, t, t, t, t, t, t, t, t, f],
+                [j, g, g, g, g, g, g, g, g, g, g, g, d],
             ],
 
             [
-                [g, g, g, g, g, g, g, g, g, g, g, g],
-                [0, 0, 0, 0, 0, 0, 0, l, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, l, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, l, 0, 0, 0, P],
-                [0, 0, 0, 0, 0, g, k, g, 0, 0, 0, 0],
-                [y, g, g, 0, 0, 0, 0, w, 0, c, 0, g],
-                [0, 0, 0, 0, 0, 0, 0, w, 0, g, 0, c],
-                [0, 0, 0, 0, 0, 0, 0, w, 0, 0, 0, g],
-                [0, 0, 0, 0, 0, 0, 0, w, 0, 0, 0, 0],
-                [0, 0, g, 0, 0, 0, 0, w, 0, g, 0, 0],
-                [g, g, g, g, g, g, g, g, g, g, g, g],
-                [g, g, g, g, g, g, g, g, g, g, g, g]
-
+                [i, i, i, i, i, i, i, i, i, i, i, i, i],
+                [i, i, i, i, i, i, i, i, i, i, i, i, i],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [y, q, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [q, q, 0, 0, 0, 0, 0, c, 0, 0, 0, 0, 0],
+                [q, q, 0, 0, 0, 0, l2, l2, l2, 0, 0, 0, P],
+                [q, q, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [q, q, 0, 0, 0, 0, 0, 0, 0, 0, 0, l2, l2],
+                [q, q, 0, 0, 0, 0, 0, 0, 0, 0, 0, l2, l2],
+                [j, t, t, t, t, 0, 0, 0, 0, 0, t, t, d],
             ],
 
 
-            [
-                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [y, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, P],
-                [t, t, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [g, g, 0, 0, 0, 0, 0, 0, 0, t, t, t],
-                [g, g, t, t, 0, 0, 0, 0, 0, l, 0, 0],
-                [g, g, g, g, 0, 0, 0, 0, 0, l, 0, 0],
-                [g, g, g, g, 0, 0, 0, 0, 0, l, 0, 0],
-                [t, t, t, t, t, t, t, t, t, t, t, t],
-                [g, g, g, g, g, g, g, g, g, g, g, g]
 
-            ]
-
-            ,
             [
-                [0, 0, 0, 0, 0, 0, g, g, g, g, g, g],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [y, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [t, t, r, r, r, t, t, t, t, 0, 0, 0],
-                [g, g, 0, 0, 0, g, g, g, g, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [P, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [t, t, t, t, t, t, t, t, t, t, t, t],
-                [g, g, g, g, g, g, g, g, g, g, g, g]
+                [0, 0, 0, 0, i, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, i, 0, 0, 0, 0, P, 0, 0, 0],
+                [0, 0, 0, 0, i, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, c, 0, i, 0, 0, 0, l2, l2, l2, 0, 0],
+                [0, 0, 0, 0, i, 0, c, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [y, q, 0, 0, 0, 0, q, q, 0, 0, 0, 0, 0],
+                [q, q, 0, 0, 0, 0, q, q, 0, 0, 0, l2, l2],
+                [q, q, 0, 0, 0, m, q, q, q, q, q, 0, 0],
+                [q, q, 0, 0, 0, 0, q, q, q, q, q, 0, 0],
+                [p, t, t, t, t, t, t, t, t, t, t, t, f],
+                [j, g, g, g, g, g, g, g, g, g, g, g, d],
             ],
-            [
-                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, P],
-                [y, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [t, t, r, r, r, t, t, r, r, r, t, t],
-                [g, g, 0, 0, 0, g, g, 0, 0, 0, g, g],
-                [g, g, 0, 0, 0, g, g, 0, 0, 0, g, g],
-                [g, g, 0, 0, 0, g, g, g, g, 0, g, g],
-                [g, g, g, 0, 0, g, g, g, g, 0, g, g],
-                [t, t, t, t, t, t, t, t, t, t, t, t],
-                [g, g, g, g, g, g, g, g, g, g, g, g]
-            ],
-            [
-                [0, 0, 0, 0, 0, 0, 0, 0, g, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [y, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, P],
-                [t, t, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [g, g, 0, 0, 0, 0, 0, 0, 0, 0, t, t],
-                [g, g, 0, 0, 0, 0, 0, 0, 0, 0, g, g],
-                [g, g, r, r, r, t, t, r, r, r, g, g],
-                [g, g, 0, 0, 0, g, g, 0, 0, 0, g, g],
-                [t, t, t, t, t, t, t, t, t, t, t, t],
-                [g, g, g, g, g, g, g, g, g, g, g, g]
-            ],
-
-            [
-                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, c, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [y, 0, 0, 0, 0, t, 0, 0, 0, t, t, t],
-                [t, t, 0, 0, 0, l, 0, 0, 0, 0, 0, 0],
-                [g, g, 0, 0, 0, l, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, l, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, g, g, 0, 0, 0, 0, P, 0],
-                [0, 0, 0, g, g, g, 0, 0, 0, 0, 0, 0],
-                [t, t, t, t, t, t, t, t, t, t, t, t],
-                [g, g, g, g, g, g, g, g, g, g, g, g]
-            ],
-            [
-                [0, 0, 0, t, 0, 0, 0, 0, 0, t, 0, 0],
-                [0, 0, 0, g, c, 0, 0, 0, c, g, 0, 0],
-                [0, 0, 0, l, 0, 0, 0, 0, 0, g, 0, 0],
-                [0, 0, 0, l, 0, 0, t, 0, 0, l, 0, 0],
-                [y, 0, 0, l, 0, 0, g, 0, 0, l, 0, 0],
-                [g, 0, 0, g, 0, 0, l, 0, 0, l, 0, 0],
-                [g, 0, 0, g, 0, 0, l, 0, 0, g, 0, 0],
-                [g, 0, 0, 0, 0, 0, l, 0, 0, g, 0, 0],
-                [g, 0, 0, 0, 0, 0, g, 0, 0, 0, P, 0],
-                [g, g, 0, 0, 0, 0, g, 0, 0, 0, 0, 0],
-                [t, t, t, t, t, t, t, t, t, t, t, t],
-                [g, g, g, g, g, g, g, g, g, g, g, g]
-            ]
+                [
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, c, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, P],
+                    [0, 0, 0, 0, 0, 0, l2, l2, l2, 0, 0, q, q],
+                    [0, 0, 0, l2, l2, 0, 0, 0, 0, 0, 0, q, q],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [y, q, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [q, q, 0, p, t, t, 0, 0, 0, 0, 0, t, f],
+                    [p, t, t, g, g, g, g, g, g, g, g, g, d],
+                    [j, g, g, g, g, g, g, g, g, g, g, g, d],
+                ],
 
 
-        ];
+                [
+                    [0, 0, 0, i, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, i, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, i, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, i, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, l2, l2, y, l2, l2, l2, l2, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, c, 0],
+                    [c, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, l2, l2, l2, l2, l2, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [l2, l2, l2, l2, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, P, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [v, v, v, v, v, v, t, t, v, v, v, v, v],
+                ],
 
-        this.avgTileWidth = canvas.width / this.array[0][0].length;
-        this.avgTileHeight = canvas.height / this.array[0].length;
-        this.monster = {
-            slimeballs: []
-        }
+                [
+                    [0, 0, 0, 0, i, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, P, 0, 0, i, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, i, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, i, 0, 0, 0, 0, 0, 0, c, 0],
+                    [0, l2, l2, 0, 0, 0, l2, l2, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, c, 0, 0, 0, 0, 0, 0, 0, l2, l2, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, l2, l2, l2, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [y, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, m],
+                    [p, t, t, t, 0, 0, 0, t, t, t, t, t, f],
+                    [j, g, g, g, g, g, g, g, g, g, g, g, d],
+                ],
+
+
+
+
+
+                [
+                    [0, 0, 0, 0, 0, 0, i, 0, 0, i, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, i, c, 0, i, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, i, 0, 0, i, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, i, 0, 0, i, 0, 0, 0],
+                    [0, 0, 0, l2, l2, 0, 0, 0, 0, i, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, i, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, P],
+                    [0, m, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [y, l2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, m],
+                    [0, 0, 0, 0, 0, 0, 0, p, t, t, t, t, f],
+                    [v, v, v, v, v, v, v, j, g, g, g, g, d],
+                ],
+
+                [
+                    [i, i, i, i, i, i, i, i, i, i, i, i, i],
+                    [i, i, i, i, i, i, i, i, i, i, i, i, i],
+                    [0, 0, 0, 0, i, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, i, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, i, 0, 0, 0, 0, 0, 0, 0, P],
+                    [0, 0, c, 0, i, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, l2, 0, i, 0, 0, 0, l2, l2, l2, l2, l2],
+                    [0, 0, i, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, i, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, i, 0, 0, 0, m, 0, 0, 0, c, 0, 0],
+                    [0, 0, i, 0, 0, l2, l2, 0, 0, 0, 0, 0, 0],
+                    [y, 0, 0, 0, 0, 0, 0, 0, 0, 0, t, 0, 0],
+                    [v, v, v, v, v, v, v, v, v, v, g, v, v],
+                ],
+
+
+
+
+
+
+
+
+
+                [
+                    [0, 0, 0, i, c, 0, 0, 0, i, i, i, i, i],
+                    [0, 0, 0, i, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, i, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, i, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, l2, l2, l2, 0, 0, 0, 0, 0, 0],
+                    [y, l2, l2, l2, 0, 0, 0, 0, 0, 0, 0, 0, r],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, l2, l2, l2, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [P, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, m, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, t, t, t, t, d],
+                    [j, g, g, g, g, v, v, v, g, g, g, g, d],
+                ],
+
+                [
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, P],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [l2, l2, l2, 0, 0, 0, l2, l2, 0, 0, 0, l2, l2],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, c, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, m, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [c, 0, 0, l2, l2, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, l2, l2, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, t, t, t, t, t, 0, 0, 0, m, 0],
+                    [y, t, t, o, o, o, o, o, t, t, t, t, f],
+                    [g, g, g, g, g, g, g, g, g, g, g, g, d],
+                ],
+
+
+
+
+
+
+                [
+                    [0, 0, i, 0, 0, 0, P, 0, 0, 0, i, 0, 0],
+                    [0, 0, i, 0, 0, 0, 0, 0, 0, 0, i, 0, 0],
+                    [0, 0, i, 0, 0, 0, l2, 0, 0, 0, i, c, 0],
+                    [0, 0, i, l2, 0, 0, 0, 0, 0, l2, i, 0, 0],
+                    [0, 0, i, 0, 0, 0, 0, 0, 0, 0, i, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, l2, l2, 0, 0, 0, 0, 0, 0, 0, l2, l2, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, c, 0, 0, l2, l2, 0, l2, l2, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [m, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, m],
+                    [p, 0, 0, 0, 0, 0, y, 0, 0, 0, 0, 0, f],
+                    [j, g, g, g, g, g, g, g, g, g, g, g, d],
+                ],
+
+                [
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, P],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, l2, l2, 0, 0, 0, l2, 0, 0, 0, 0, l2],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, l2, 0, 0, l2, 0, 0, 0, l2, 0, 0, l2, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [y, 0, 0, 0, l2, l2, 0, 0, l2, 0, 0, 0, m],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, , 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [v, j, g, d, v, v, v, j, g, d, v, v, v],
+                ],
+
+
+
+
+
+
+
+
+
+
+
+                [
+                    [0, 0, 0, 0, 0, 0, 0, i, 0, 0, i, c, 0],
+                    [0, 0, 0, 0, 0, 0, 0, i, 0, 0, i, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, i, 0, 0, i, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, l2, l2, 0, 0, l2, l2, 0, 0, l2, l2, l2],
+                    [r, 0, 0, i, 0, 0, 0, 0, 0, 0, i, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, i, 0, 0],
+                    [0, l2, l2, l2, 0, 0, l2, l2, 0, 0, 0, 0, 0],
+                    [0, 0, 0, i, 0, 0, 0, 0, 0, 0, q, 0, 0],
+                    [0, 0, 0, i, 0, 0, 0, 0, 0, 0, q, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, q, 0, P],
+                    [y, t, t, t, t, 0, 0, 0, 0, 0, t, t, f],
+                    [j, g, g, g, g, g, g, g, g, g, g, g, d],
+                ],
+
+                [
+                    [P, 0, 0, 0, 0, 0, i, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [l2, l2, l2, l2, l2, l2, l2, l2, l2, l2, 0, 0, 0],
+                    [0, 0, 0, i, 0, 0, 0, 0, 0, l2, 0, 0, 0],
+                    [0, 0, 0, i, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [l2, 0, 0, l2, l2, l2, l2, l2, l2, l2, 0, 0, l2],
+                    [0, 0, 0, i, 0, 0, 0, 0, 0, i, 0, 0, 0],
+                    [0, 0, 0, i, 0, 0, 0, 0, 0, i, 0, 0, 0],
+                    [0, 0, 0, i, 0, 0, 0, 0, 0, i, 0, 0, 0],
+                    [0, m, 0, 0, 0, 0, 0, 0, 0, 0, 0, m, 0],
+                    [y, t, t, t, 0, 0, 0, 0, 0, t, t, t, f],
+                    [j, g, g, g, g, g, g, g, g, g, g, g, d],
+                ],
+
+
+
+
+
+
+
+
+
+
+
+                [
+                    [0, 0, 0, i, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, i, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, i, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, y, l2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, l2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [c, 0, l2, l2, l2, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [l2, 0, l2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, i, 0, 0, m, 0, 0, 0, 0, 0, 0, 0],
+                    [l2, 0, i, l2, l2, l2, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, i, 0, 0, 0, 0, 0, 0, 0, c, 0, 0],
+                    [P, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [p, t, t, t, t, t, 0, 0, 0, 0, 0, t, f],
+                    [j, g, g, g, g, g, g, g, g, g, g, g, d],
+                ],
+
+                [
+                    [0, 0, 0, 0, 0, 0, l, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, l, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, l, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, l, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, l, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, l, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, l2, l2, l2, l2, l2, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, w, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, w, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, w, 0, 0, 0, 0, 0, 0],
+                    [y, 0, 0, k, 0, 0, w, 0, 0, 0, 0, 0, P],
+                    [p, t, t, t, t, t, t, t, t, t, t, t, f],
+                    [j, g, g, g, g, g, g, g, g, g, g, g, d],
+                ],
+
+
+
+
+
+
+
+                [
+                    [h1, h1, h1, h1, h1, h1, h1, h1, h1, h1, h1, h1, h1],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, h],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, h],
+                    [0, 0, 0, 0, l, 0, 0, 0, 0, 0, 0, 0, h],
+                    [0, 0, 0, 0, l, P, 0, 0, 0, 0, 0, 0, h],
+                    [0, 0, 0, 0, l, 0, 0, 0, 0, 0, 0, 0, h],
+                    [0, 0, 0, 0, l2, l2, l2, l2, l2, 0, 0, 0, h],
+                    [y, c1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, h],
+                    [c1, c1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, h],
+                    [c1, c1, 0, 0, 0, 0, 0, 0, 0, c1, c1, 0, h],
+                    [c1, c1, 0, 0, 0, 0, 0, 0, 0, c1, c1, 0, h],
+                    [p, t, t, t, t, t, t, t, t, t, t, t, f],
+                    [j, g, g, g, g, g, g, g, g, g, g, g, d],
+                ],
+
+                [
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, l2, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, l2, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, l2, P, 0, 0, 0],
+                    [0, 0, 0, 0, 0, k, 0, 0, l2, 0, 0, 0, 0],
+                    [0, 0, l2, l2, l2, l2, l2, l2, l2, l2, l2, 0, 0],
+                    [0, 0, 0, 0, 0, 0, w, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, w, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, w, 0, 0, 0, 0, l2, l2],
+                    [y, 0, 0, 0, 0, 0, w, 0, 0, 0, 0, l2, l2],
+                    [p, t, t, t, t, t, t, t, t, t, t, t, f],
+                    [j, g, g, g, g, g, g, g, g, g, g, g, d],
+                ],
+
+
+
+
+
+
+
+
+
+                [
+                    [h1, h1, h1, h1, h1, h1, h1, h1, h1, h1, h1, h1, h1],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, l, 0, c, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, l, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, l, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, k, l, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, l2, l2, l2, 0, 0, l2, l2, l2],
+                    [y, l2, l2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, c],
+                    [0, 0, c1, 0, 0, 0, 0, 0, 0, 0, c1, 0, 0],
+                    [p, t, t, t, t, t, t, t, t, t, t, t, f],
+                    [f, g, g, g, g, g, g, g, g, g, g, g, d],
+                ],
+
+                [
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [h1, h1, h1, h1, h1, h1, h1, h1, h1, h1, h1, h1, h1],
+                    [h1, h1, h1, h1, h1, h1, h1, h1, h1, h1, h1, h1, h1],
+                    [0, 0, 0, 0, 0, w, c, l, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, w, 0, l, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, w, u, l, 0, 0, 0, P, 0],
+                    [y, l2, l2, 0, 0, l2, l2, l2, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, z, 0, 0, 0, c1, c1, c1],
+                    [0, k, 0, 0, 0, 0, z, c, 0, 0, c1, c1, c1],
+                    [l2, l2, l2, 0, 0, 0, z, 0, 0, 0, c1, c1, c1],
+                    [p, t, t, t, t, t, t, t, t, t, t, t, f],
+                    [f, g, g, g, g, g, g, g, g, g, g, g, d],
+                ],
+
+
+
+
+
+
+
+
+
+
+
+                [
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, k, 0, 0],
+                    [0, 0, 0, 0, l2, r, r, r, l2, 0, 0, 0, 0],
+                    [0, 0, l2, l2, l2, l2, l2, l2, l2, l2, l2, l2, l2],
+                    [0, 0, l2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, l2, 0, 0, 0, 0, 0, 0, 0, 0, 0, P],
+                    [0, 0, l2, 0, u, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, l2, l2, l2, l2, W, W, W, l2, l2, Z, Z],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [y, c1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [c1, c1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [p, t, t, t, t, t, t, t, t, t, t, t, f],
+                    [f, g, g, g, g, g, g, g, g, g, g, g, d],
+                ],
+
+                [
+                    [h1, h1, h1, h1, h1, h1, h1, h1, h1, h1, h1, h1, h1],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, h],
+                    [c, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, h],
+                    [0, 0, 0, l, 0, 0, 0, 0, x, 0, 0, 0, h],
+                    [0, 0, 0, l, 0, 0, 0, 0, x, 0, P, 0, h],
+                    [0, 0, 0, l, 0, 0, 0, u, x, 0, 0, 0, h],
+                    [0, 0, 0, l2, W, W, W, l2, l2, l2, l2, l2, l2],
+                    [y, c1, 0, 0, 0, 0, 0, z, 0, 0, 0, c, h],
+                    [c1, c1, 0, k, 0, 0, 0, z, 0, 0, 0, 0, h],
+                    [c1, c1, c1, c1, r, r, c1, c1, 0, 0, 0, 0, h],
+                    [c1, c1, c1, c1, 0, 0, c1, c1, l2, e, 0, l2, h],
+                    [p, t, t, t, t, t, t, t, t, t, t, t, f],
+                    [f, g, g, g, g, g, g, g, g, g, g, g, d],
+                ],
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                [
+                    [h1, h1, h1, h1, h1, h1, h1, h1, h1, h1, h1, h1, h1],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, l, 0, 0, z, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, l, 0, 0, z, 0, 0],
+                    [0, 0, 0, 0, 0, 0, k, l, 0, 0, z, 0, e],
+                    [y, l2, l2, 0, 0, l2, l2, l2, 0, 0, l2, l2, l2],
+                    [0, 0, x, 0, 0, 0, 0, 0, 0, 0, w, 0, 0],
+                    [0, 0, x, 0, 0, 0, 0, 0, 0, 0, w, 0, 0],
+                    [P, 0, x, 0, 0, 0, 0, 0, 0, 0, w, 0, u],
+                    [0, 0, x, 0, 0, 0, 0, c1, 0, c1, c1, c1, c1],
+                    [p, t, t, t, t, t, t, t, t, t, t, t, f],
+                    [j, g, g, g, g, g, g, g, g, g, g, g, d],
+                ],
+
+                [
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, k],
+                    [y, l2, l2, r, r, r, l2, l2, W, W, l2, l2, l2],
+                    [0, 0, z, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, z, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [P, 0, z, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, z, 0, 0, 0, 0, 0, 0, 0, 0, u, 0],
+                    [p, t, t, t, t, t, t, t, t, t, t, t, f],
+                    [j, g, g, g, g, g, g, g, g, g, g, g, d],
+                ],
+
+
+
+
+
+                [
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, k],
+                    [y, c1, Z, Z, Z, l2, l2, l2, W, W, W, l2, l2],
+                    [c1, c1, 0, P, 0, 0, l, 0, 0, 0, 0, 0, 0],
+                    [c1, c1, 0, 0, 0, 0, l, 0, 0, 0, 0, 0, 0],
+                    [c1, c1, 0, 0, 0, 0, l, 0, 0, u, 0, 0, 0],
+                    [p, t, t, t, t, t, t, t, t, t, t, t, f],
+                    [j, g, g, g, g, g, g, g, g, g, g, g, d],
+                ],
+
+                [
+                    [h1, h1, h1, h1, h1, h1, h1, l2, h1, h1, h1, h1, h1],
+                    [0, 0, 0, 0, 0, 0, 0, l, 0, c, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, l, 0, 0, l2, l2, l2],
+                    [0, 0, 0, 0, 0, 0, k, l, 0, 0, x, 0, 0],
+                    [0, 0, 0, 0, 0, l2, l2, l2, 0, 0, x, 0, P],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, x, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, l2, l2, l2],
+                    [y, l2, l2, 0, 0, 0, 0, 0, 0, 0, c1, c1, c1],
+                    [l2, l2, l2, W, W, c1, c1, c1, Z, Z, l2, l2, l2],
+                    [0, 0, 0, 0, 0, c1, c1, c1, 0, 0, 0, 0, c],
+                    [0, u, 0, 0, 0, c1, c1, c1, 0, e, 0, 0, 0],
+                    [p, t, t, t, t, t, t, t, t, t, t, t, f],
+                    [f, g, g, g, g, g, g, g, g, g, g, g, d],
+                ],
+
+
+
+
+
+
+
+
+
+
+
+
+
+                [
+                    [0, 0, z, 0, 0, 0, l2, 0, 0, 0, 0, 0, 0],
+                    [0, 0, z, 0, e, 0, l2, 0, 0, 0, 0, 0, P],
+                    [y, 0, l2, l2, l2, l2, l2, X, X, X, l2, l2, l2],
+                    [0, 0, l2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, l2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, l2, 0, 0, l2, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, l2, 0, 0, l2, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, l2, u, 0, l2, l2, 0, 0, 0, 0, 0, 0],
+                    [0, 0, l2, l2, l2, l2, l2, l2, l2, l2, W, W, W],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, k, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [p, t, t, t, t, t, t, t, t, t, t, t, f],
+                    [j, g, g, g, g, g, g, g, g, g, g, g, d]
+                ],
+
+                [
+                    [0, 0, 0, 0, 0, 0, w, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, w, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, w, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, l2, 0, 0, 0, 0, 0, 0],
+                    [0, y, l2, 0, 0, 0, l, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, l, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, k, l, 0, 0, 0, 0, 0, u],
+                    [l2, l2, Z, Z, l2, l2, l2, l2, l2, X, X, l2, l2],
+                    [0, 0, 0, 0, 0, 0, l, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, l, 0, 0, 0, 0, 0, 0],
+                    [0, e, 0, 0, 0, 0, l, 0, 0, 0, 0, 0, P],
+                    [p, t, t, t, t, t, t, t, t, t, t, t, f],
+                    [j, g, g, g, g, g, g, g, g, g, g, g, d]
+                ]
+            ];
+
+            this.avgTileWidth = canvas.width / this.array[0][0].length;
+            this.avgTileHeight = canvas.height / this.array[0].length;
+            this.monster = {
+                slimeballs: []
+            }
         this.coins = 0;
     }
 
@@ -859,7 +1318,7 @@ class Game {
             for (let j = 0; j < this.array[h][i].length; j++) {
                 if (!isNaN(this.array[h][i][j]) || typeof this.array[h][i][j] == "string") {
                     if (this.array[h][i][j] == "y") {
-                        this.current.sparningPoint.push({ x: j, y: i - 1 });
+                        this.current.sparningPoint.push({ x: j, y: i - 2 });
                     }
                     this.array[h][i][j] = new Component(((canvas.width / this.array[h].length) * j),
                         ((canvas.height / this.array[h][i].length) * i),
@@ -878,10 +1337,10 @@ class Game {
                     game.objects.thrown = [];
                     this.objects.turnon = this.objects.turnoff;
                     this.objects.turnoff = "";
-                    if(game.current.level > 25){
-                    game.current.stage = "electric";     
+                    if (game.current.level > 1) {
+                        game.current.stage = "electric";
                     }
-         
+
                     return;
                 }
                 if (this.objects.turnoff) {
@@ -900,13 +1359,14 @@ class Game {
                     (this.array[h][i][j].type == "3" || this.array[h][i][j].type == "3l") ||
                     (this.array[h][i][j].type == "4" || this.array[h][i][j].type == "4l")) && this.array[h][i][j].appearance.visible) {
                     player.health -= 1;
-                    if (this.array[h][i][j].fullType == "l" ||
+                    if ((this.array[h][i][j].fullType == "l" ||
                         this.array[h][i][j].fullType == "2" ||
                         this.array[h][i][j].fullType == "3" ||
-                        this.array[h][i][j].fullType == "4")
+                        this.array[h][i][j].fullType == "4") && (j != 0 && j != this.array[h][i].length))
                         player.stats.x += player.left ? -100 : 100;
                     else {
-                        player.stats.y += 75;
+                        if (j != 0 && j != this.array[h][i].length)
+                            player.stats.y += 75;
                     }
                 }
 
@@ -934,7 +1394,25 @@ class Game {
                         game.objects.turnoff = "";
 
                     }
-                }
+                }/*
+                if(this.array[h][i][j].type == "1"  && String(time / 1000).indexOf(".") == -1){
+                   const teleportingPlaces = [0, 4, 7]
+                   var boss =  teleportingPlaces[Math.round(Math.random() * 2)];
+
+                   if(i == 4){
+                    this.array[h][i][j] = "0"; 
+                    this.array[h][boss][j] = "1";
+                  }
+                  if(i == 0) {
+                    this.array[h][i][j] = "0"; 
+                    this.array[h][boss][j] = "1";
+                  }
+                  if( i == 7){
+                    this.array[h][i][j] = "0"; 
+                    this.array[h][boss][j] = "1";
+                  }
+                  this.array[h][boss][j].image = elematrixSuperSonic;
+                }*/
                 if (player.collide(this.array[h][i][j]) && this.array[h][i][j].type == "k" && player.jump) {
                     if (this.array[h][i][j].image.src.indexOf("pinkButtonUp.png") > -1) {
                         this.array[h][i][j].image = pinkButtonDown;
@@ -984,7 +1462,7 @@ class Game {
                     );
                     game.coins += 1;
                 }
-                if (player.collide(this.array[h][i][j]) && (this.array[h][i][j].type == "s" || this.array[h][i][j].type == "v")) {
+                if (player.collide(this.array[h][i][j]) && (this.array[h][i][j].type == "s" || this.array[h][i][j].type == "v" || this.array[h][i][j].type == "vr")) {
                     player.health -= 3;
                 }
                 if (player.collide(this.array[h][i][j]) && this.array[h][i][j].type != "0" && this.array[h][i][j].appearance.visible) {
@@ -995,6 +1473,7 @@ class Game {
                         player.stats.y = rockbottom;
                         player.jump = false;
                         if ((this.array[h][i][j].type == "r" || this.array[h][i][j].type == "n")) {
+                            player.gravitySpeed = -(0.3 * player.amount.y);
                             player.jump = true;
                             if (this.array[h][i][j].type == "r") {
                                 this.array[h][i][j].image = mushroomSpring;
@@ -1071,15 +1550,7 @@ class Game {
             player.health = Infinity;
         }
         layer.draw();
-        ctx.beginPath();
-        var text = game.coins;
-        ctx.fillStyle = "gold";
-        ctx.font = "60px pixel";
-        ctx.fillText(text, canvas.width / 6, canvas.height/5);
-        ctx.fillText("LEVEL: " + (game.current.level + 1), canvas.width * 2 / 3, 45);
-        ctx.fillStyle = "gray";
-        ctx.fillText(player.stats.ninjaStarAmount, canvas.width / 5, canvas.height/10);
-        ctx.closePath();
+
         if (player.right && !player.stats.noright && player.stats.x + player.stats.width + player.amount.x < canvas.width) {
             player.stats.x += player.amount.x;
             player.stats.noleft = false;
@@ -1130,6 +1601,15 @@ class Game {
             player.stats.slowTime = 0;
             player.amount.x = 3;
         }
+        ctx.beginPath();
+        var text = game.coins;
+        ctx.fillStyle = "gold";
+        ctx.font = "60px pixel";
+        ctx.fillText(text, canvas.width / 6, canvas.height / 5);
+        ctx.fillText("LEVEL: " + (game.current.level + 1), canvas.width * 2 / 3, 45);
+        ctx.fillStyle = "gray";
+        ctx.fillText(player.stats.ninjaStarAmount, canvas.width / 5, canvas.height / 10);
+        ctx.closePath();
         time += 10;
         game.canvas();
         player.stats.y += player.gravitySpeed;
@@ -1246,6 +1726,32 @@ class Player {
 
         ctx.closePath();
     }
+    win() {
+        clearInterval(mainTime);
+        clearInterval(ninjastars);
+        clearInterval(generator);
+        document.getElementById("GAMEOVER").style.display = "block";
+        document.getElementById("RETRY").style.display = "block";
+        document.getElementById("mainMenu").pause();
+
+
+        /*
+        ctx.fillStyle = "green";
+        ctx.font = "60px pixel";
+        if (time / 1000 > Number(localStorage.highScore)) {
+            ctx.fillText("You survived for " + time / 1000 + " seconds! Beating your old highscore( " + Number(localStorage.highScore) + "s ) by " + Math.abs(Number(localStorage.highScore) - time / 1000).toFixed(2) + " seconds!", canvas.width / 6, canvas.height / 2);
+            localStorage.highScore = time / 1000;
+        }
+        if (time / 1000 < Number(localStorage.highScore)) {
+            ctx.fillText("You survived for " + time / 1000 + " seconds! Less than your old highscore( " + Number(localStorage.highScore) + "s ) by " + Math.abs(Number(localStorage.highScore) - time / 1000).toFixed(2) + " seconds...", canvas.width / 6, canvas.height / 2);
+
+        }
+        ctx.fillStyle = "yellow";
+        ctx.fillText("And collected " + game.coins + " coins", canvas.width / 4, canvas.height / 2 + 50);
+                */
+
+        ctx.closePath();
+    }
     draw() {
 
         ctx.beginPath();
@@ -1332,6 +1838,11 @@ class Player {
             this.left = true;
             this.stats.right = false;
             this.stats.left = true;
+
+        }
+        if (event.ctrlKey && event.altKey && event.key == "o") {
+            player.stats.ninjaStarAmount = Infinity;
+            player.health = Infinity;
 
         }
         if (event.key == " " && player.stats.ninjaStarAmount > 0) {
@@ -1489,7 +2000,7 @@ function start() {
     document.getElementById("HEALTHSTRUCTURE").style.display = "block";
     document.getElementById("clouds").style.display = "none";
     document.getElementById("mainMenu").pause();
-
+    
     document.addEventListener("keydown", function () {
 
         player.movement(event);
@@ -1505,6 +2016,9 @@ function start() {
     generator = setInterval(createLevels, 100);
     mainTime = setInterval(function () {
         game.draw();
+        if(game.current.level == 35){
+            game.win();
+        }
 
     }, 10);
     ninjastars = function () {
