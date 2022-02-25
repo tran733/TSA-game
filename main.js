@@ -1318,7 +1318,7 @@ class Game {
             for (let j = 0; j < this.array[h][i].length; j++) {
                 if (!isNaN(this.array[h][i][j]) || typeof this.array[h][i][j] == "string") {
                     if (this.array[h][i][j] == "y") {
-                        this.current.sparningPoint.push({ x: j, y: i - 2 });
+                        this.current.sparningPoint.push({ x: j, y: i - 1});
                     }
                     this.array[h][i][j] = new Component(((canvas.width / this.array[h].length) * j),
                         ((canvas.height / this.array[h][i].length) * i),
@@ -1332,13 +1332,14 @@ class Game {
                 }
                 if (player.collide(this.array[h][i][j]) && this.array[h][i][j].type == "P") {
                     this.current.level += this.current.level < this.array.length ? 1 : 0;
-                    player.stats.x = this.current.sparningPoint[h].x * ((canvas.width / this.array[h].length));
+                    player.stats.x = this.current.sparningPoint[h+1].x * ((canvas.width / this.array[h].length));
                     player.stats.y = ((canvas.height / this.array[h][i].length) * this.current.sparningPoint[h].y);
                     game.objects.thrown = [];
                     this.objects.turnon = this.objects.turnoff;
                     this.objects.turnoff = "";
                     if (game.current.level > 1) {
                         game.current.stage = "electric";
+                        
                     }
 
                     return;
