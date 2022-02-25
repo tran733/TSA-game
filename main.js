@@ -1566,7 +1566,7 @@ class Game {
         if (test) {
             player.health = Infinity;
         }
-        if(this.level < 15)
+        if(game.current.level < 15)
           layer.draw();
         else {
           layer2.draw();
