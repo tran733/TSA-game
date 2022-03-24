@@ -471,15 +471,6 @@ class Component {
                 case "$":
                     this.image = BottomMiddleSwamp;
                     break;
-                case "v":
-                    this.image = swampWaterTop;
-                    break;
-                case ",":
-                    this.image = swampWaterBottom;
-                    break;
-                case ".":
-                    this.image = vines;
-                    break;
                 case "-":
                     this.image = platformSwamp;
                     break;
@@ -491,9 +482,6 @@ class Component {
                     break;
                 case "[":
                     this.image = crate;
-                    break;
-                case "]":
-                    this.image = warehouse;
                     break;
                 case "%":
                     this.image = ballHorizontalAttack;
